@@ -52,3 +52,38 @@ export async function deleteCategoryAction(id: string) {
   revalidatePath("/categories");
   return { ok: true };
 }
+
+const CarrySchema = z.object({ targetCycleId: z.string().uuid() });
+
+export async function carryForwardCategoriesAction(formData: FormData) {
+  const parsed = CarrySchema.safeParse(Object.fromEntries(formData));
+  if (!parsed.success) return { error: "Dati non validi." };
+  const supabase = await getServerSupabase();
+
+  const { data: target } = await supabase.from("cycles").select("user_id, start_date").eq("id", parsed.data.targetCycleId).single();
+  if (!target) return { error: "Ciclo non trovato." };
+
+  const { data: previous } = await supabase
+    .from("cycles")
+    .select("id")
+    .eq("user_id", target.user_id)
+    .lt("start_date", target.start_date)
+    .order("start_date", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (!previous) return { error: "Nessun ciclo precedente." };
+
+  const { data: prevCats } = await supabase
+    .from("categories")
+    .select("name, expected_amount, is_fixed, sort_order")
+    .eq("cycle_id", previous.id)
+    .order("sort_order");
+  if (!prevCats || prevCats.length === 0) return { error: "Il ciclo precedente non ha categorie." };
+
+  const rows = prevCats.map((c) => ({ ...c, cycle_id: parsed.data.targetCycleId }));
+  const { error } = await supabase.from("categories").insert(rows);
+  if (error) return { error: error.message };
+  revalidatePath("/");
+  revalidatePath("/categories");
+  return { ok: true, count: rows.length };
+}

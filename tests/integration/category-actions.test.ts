@@ -44,3 +44,29 @@ describe("category actions", () => {
     expect(error!.message).toMatch(/foreign key|violates/i);
   });
 });
+
+describe("category carry-forward", () => {
+  it("carries forward categories from the previous cycle", async () => {
+    const FWD_EMAIL = "carrie-fwd@test.local";
+    await deleteTestUsers([FWD_EMAIL]);
+    const { id, client } = await createTestUser(FWD_EMAIL);
+    const a = admin();
+    const { data: prev } = await a.from("cycles").insert({ user_id: id, start_date: "2026-03-27", end_date: "2026-04-26" }).select("*").single();
+    const { data: target } = await a.from("cycles").insert({ user_id: id, start_date: "2026-04-27", end_date: "2026-05-26" }).select("*").single();
+    await a.from("categories").insert([
+      { cycle_id: prev!.id, name: "Spese casa", expected_amount: 800, is_fixed: false, sort_order: 0 },
+      { cycle_id: prev!.id, name: "Mutuo", expected_amount: 530, is_fixed: true, sort_order: 1 },
+    ]);
+
+    const { data: prevCats } = await a.from("categories").select("name, expected_amount, is_fixed, sort_order").eq("cycle_id", prev!.id).order("sort_order");
+    const rows = prevCats!.map((c) => ({ ...c, cycle_id: target!.id }));
+    const { error } = await client.from("categories").insert(rows);
+    expect(error).toBeNull();
+
+    const { data: copied } = await client.from("categories").select("*").eq("cycle_id", target!.id).order("sort_order");
+    expect(copied).toHaveLength(2);
+    expect(copied![0]!.name).toBe("Spese casa");
+    expect(copied![1]!.is_fixed).toBe(true);
+    await deleteTestUsers([FWD_EMAIL]);
+  });
+});
