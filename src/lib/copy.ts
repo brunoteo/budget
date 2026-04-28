@@ -1,0 +1,19 @@
+export const copy = {
+  app: { title: "Budget" },
+  auth: {
+    loginTitle: "Accedi",
+    signupTitle: "Crea account",
+    email: "Email",
+    password: "Password",
+    displayName: "Nome",
+    cycleStartDay: "Giorno di inizio del ciclo",
+    cycleStartDayHelp: "Il giorno del mese in cui ricevi lo stipendio (1–31).",
+    submitLogin: "Accedi",
+    submitSignup: "Crea account",
+    haveAccount: "Hai già un account?",
+    noAccount: "Non hai un account?",
+    goLogin: "Accedi",
+    goSignup: "Registrati",
+    errorGeneric: "Si è verificato un errore. Riprova.",
+  },
+} as const;
