@@ -4,6 +4,8 @@ A two-user personal-budget web application replacing a manual Google Sheet. Each
 
 **Status:** MVP shipped (Plan 1). Plans 2 (Wallet CSV import) and 3 (PWA + production hardening) pending.
 
+**Git author:** always commit as `brunoteo <brunoteo@hotmail.it>`. The local repo `.git/config` already pins `user.name` and `user.email` to these values — do not override them globally. Remote: `https://github.com/brunoteo/budget.git`.
+
 ## Tech stack
 
 - **Next.js 16** (App Router, Server Components, Server Actions) + **TypeScript strict** (`noUncheckedIndexedAccess: true`)
