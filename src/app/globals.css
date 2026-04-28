@@ -5,85 +5,219 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  /* ─── Font Families ─── */
+  --font-sans: "DM Sans", system-ui, sans-serif;
+  --font-mono: "DM Mono", "Courier New", monospace;
+  --font-display: "DM Serif Display", Georgia, serif;
+  --font-heading: "DM Serif Display", Georgia, serif;
+
+  /* ─── Brand / Accent (Terracotta) ─── */
+  --color-terra-400: oklch(0.672 0.120 40);
+  --color-terra-500: oklch(0.581 0.133 38);
+  --color-terra-600: oklch(0.495 0.130 36);
+  --color-terra-700: oklch(0.398 0.120 33);
+
+  /* ─── Neutral / Clay Scale ─── */
+  --color-clay-50:  oklch(0.974 0.010 60);
+  --color-clay-100: oklch(0.963 0.014 60);
+  --color-clay-200: oklch(0.924 0.022 60);
+  --color-clay-300: oklch(0.866 0.032 60);
+  --color-clay-400: oklch(0.763 0.042 60);
+  --color-clay-500: oklch(0.648 0.052 60);
+  --color-clay-600: oklch(0.524 0.056 60);
+  --color-clay-700: oklch(0.414 0.055 55);
+  --color-clay-800: oklch(0.299 0.048 50);
+  --color-clay-900: oklch(0.187 0.038 45);
+
+  /* ─── State: Under-budget (Sage Green) ─── */
+  --color-sage-400: oklch(0.665 0.070 150);
+  --color-sage-500: oklch(0.572 0.085 150);
+  --color-sage-600: oklch(0.470 0.088 150);
+
+  /* ─── State: At-budget (Warm Amber) ─── */
+  --color-budget-amber-400: oklch(0.792 0.135 75);
+  --color-budget-amber-500: oklch(0.706 0.150 72);
+  --color-budget-amber-600: oklch(0.598 0.145 70);
+
+  /* ─── State: Over-budget (Sienna) ─── */
+  --color-sienna-400: oklch(0.665 0.128 32);
+  --color-sienna-500: oklch(0.557 0.148 30);
+  --color-sienna-600: oklch(0.454 0.140 28);
+
+  /* ─── Neutral / Info (Slate) ─── */
+  --color-slate-400: oklch(0.663 0.040 245);
+  --color-slate-500: oklch(0.548 0.054 248);
+
+  /* ─── Semantic Aliases (map to CSS vars from :root) ─── */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-sans);
-  --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-sans);
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
-  --color-ring: var(--ring);
-  --color-input: var(--input);
+  --color-surface: var(--surface);
+  --color-surface-elevated: var(--surface-elevated);
   --color-border: var(--border);
-  --color-destructive: var(--destructive);
-  --color-accent-foreground: var(--accent-foreground);
+  --color-border-muted: var(--border-muted);
+  --color-text-primary: var(--text-primary);
+  --color-text-muted: var(--text-muted);
+  --color-text-inverse: var(--text-inverse);
   --color-accent: var(--accent);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-muted: var(--muted);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-secondary: var(--secondary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-primary: var(--primary);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-popover: var(--popover);
-  --color-card-foreground: var(--card-foreground);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-foreground: var(--accent-foreground);
+
+  /* ─── Budget State Aliases ─── */
+  --color-under-budget: var(--under-budget);
+  --color-under-budget-bg: var(--under-budget-bg);
+  --color-under-budget-border: var(--under-budget-border);
+  --color-at-budget: var(--at-budget);
+  --color-at-budget-bg: var(--at-budget-bg);
+  --color-at-budget-border: var(--at-budget-border);
+  --color-over-budget: var(--over-budget);
+  --color-over-budget-bg: var(--over-budget-bg);
+  --color-over-budget-border: var(--over-budget-border);
+
+  /* ─── Shadcn token pass-throughs (preserved from original) ─── */
   --color-card: var(--card);
-  --radius-sm: calc(var(--radius) * 0.6);
-  --radius-md: calc(var(--radius) * 0.8);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) * 1.4);
-  --radius-2xl: calc(var(--radius) * 1.8);
-  --radius-3xl: calc(var(--radius) * 2.2);
-  --radius-4xl: calc(var(--radius) * 2.6);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-destructive: var(--destructive);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* ─── Border Radius ─── */
+  --radius-none: 0px;
+  --radius-sm:   0.25rem;
+  --radius-md:   0.5rem;
+  --radius-lg:   0.75rem;
+  --radius-xl:   1rem;
+  --radius-2xl:  1.5rem;
+  --radius-full: 9999px;
+
+  /* ─── Shadows ─── */
+  --shadow-xs:  0 1px 2px oklch(0 0 0 / 6%);
+  --shadow-sm:  0 1px 4px oklch(0 0 0 / 8%);
+  --shadow-md:  0 4px 12px oklch(0 0 0 / 10%);
+  --shadow-lg:  0 8px 24px oklch(0 0 0 / 12%);
+  --shadow-fab: 0 4px 16px oklch(0 0 0 / 20%);
+
+  /* ─── Motion ─── */
+  --duration-fast: 100ms;
+  --duration-base: 180ms;
+  --duration-slow: 280ms;
+  --duration-lazy: 400ms;
+
+  --ease-default: cubic-bezier(0.2, 0, 0, 1);
+  --ease-spring:  cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-in:      cubic-bezier(0.4, 0, 1, 1);
+  --ease-out:     cubic-bezier(0, 0, 0.2, 1);
+
+  /* ─── Font Size Scale ─── */
+  --text-xs:   0.6875rem;
+  --text-sm:   0.8125rem;
+  --text-base: 1rem;
+  --text-md:   1.0625rem;
+  --text-lg:   1.1875rem;
+  --text-xl:   1.375rem;
+  --text-2xl:  1.625rem;
+  --text-3xl:  2rem;
+  --text-4xl:  2.5rem;
 }
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
+  /* ─── Budget: Page & Surface ─── */
+  --background: oklch(0.963 0.014 60);         /* clay-100 — warm ivory page */
+  --surface: oklch(1 0 0);                     /* white card surface */
+  --surface-elevated: oklch(0.974 0.010 60);   /* clay-50 elevated panel */
+
+  /* ─── Budget: Text ─── */
+  --text-primary: oklch(0.187 0.038 45);       /* clay-900 */
+  --text-muted: oklch(0.648 0.052 60);         /* clay-500 */
+  --text-inverse: oklch(0.974 0.010 60);       /* clay-50 */
+
+  /* ─── Budget: Borders ─── */
+  --border-muted: oklch(0.924 0.022 60);       /* clay-200 */
+
+  /* ─── Budget: Accent (Terracotta) ─── */
+  --accent: oklch(0.581 0.133 38);             /* terra-500 */
+  --accent-hover: oklch(0.495 0.130 36);       /* terra-600 */
+  --accent-foreground: oklch(1 0 0);           /* white */
+
+  /* ─── Budget: State — Under-budget (Sage) ─── */
+  --under-budget: oklch(0.572 0.085 150);      /* sage-500 */
+  --under-budget-bg: oklch(0.572 0.085 150 / 10%);
+  --under-budget-border: oklch(0.572 0.085 150 / 25%);
+  --under-budget-text: oklch(0.470 0.088 150); /* sage-600 */
+
+  /* ─── Budget: State — At-budget (Amber) ─── */
+  --at-budget: oklch(0.706 0.150 72);          /* budget-amber-500 */
+  --at-budget-bg: oklch(0.706 0.150 72 / 10%);
+  --at-budget-border: oklch(0.706 0.150 72 / 25%);
+  --at-budget-text: oklch(0.598 0.145 70);     /* budget-amber-600 */
+
+  /* ─── Budget: State — Over-budget (Sienna) ─── */
+  --over-budget: oklch(0.557 0.148 30);        /* sienna-500 */
+  --over-budget-bg: oklch(0.557 0.148 30 / 10%);
+  --over-budget-border: oklch(0.557 0.148 30 / 25%);
+  --over-budget-text: oklch(0.454 0.140 28);   /* sienna-600 */
+
+  /* ─── Shadcn tokens (overridden to match design system) ─── */
+  --foreground: oklch(0.187 0.038 45);         /* clay-900 */
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
+  --card-foreground: oklch(0.187 0.038 45);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --popover-foreground: oklch(0.187 0.038 45);
+  --primary: oklch(0.581 0.133 38);            /* terra-500 — brand accent */
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.924 0.022 60);          /* clay-200 */
+  --secondary-foreground: oklch(0.187 0.038 45);
+  --muted: oklch(0.924 0.022 60);              /* clay-200 */
+  --muted-foreground: oklch(0.648 0.052 60);   /* clay-500 */
+  --border: oklch(0.866 0.032 60);             /* clay-300 */
+  --input: oklch(0.866 0.032 60);              /* clay-300 */
+  --ring: oklch(0.581 0.133 38);               /* terra-500 — focus ring */
+  --destructive: oklch(0.557 0.148 30);        /* sienna-500 */
+
+  /* ─── Charts (clay-based monochrome scale, override in Phase N) ─── */
+  --chart-1: oklch(0.581 0.133 38);            /* terra-500 */
+  --chart-2: oklch(0.572 0.085 150);           /* sage-500 */
+  --chart-3: oklch(0.706 0.150 72);            /* budget-amber-500 */
+  --chart-4: oklch(0.557 0.148 30);            /* sienna-500 */
+  --chart-5: oklch(0.548 0.054 248);           /* slate-500 */
+
+  /* ─── Radius base (used by shadcn radius-* calc tokens above) ─── */
+  --radius: 0.5rem;
+
+  /* ─── Sidebar (keep shadcn defaults, tinted with clay) ─── */
+  --sidebar: oklch(0.974 0.010 60);            /* clay-50 */
+  --sidebar-foreground: oklch(0.187 0.038 45);
+  --sidebar-primary: oklch(0.581 0.133 38);
+  --sidebar-primary-foreground: oklch(1 0 0);
+  --sidebar-accent: oklch(0.924 0.022 60);
+  --sidebar-accent-foreground: oklch(0.187 0.038 45);
+  --sidebar-border: oklch(0.866 0.032 60);
+  --sidebar-ring: oklch(0.581 0.133 38);
 }
 
 .dark {
+  /* Dark mode variables — preserved for future Phase N activation */
+  /* v1: .dark class is never added to <html>, so these are inert */
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.205 0 0);
@@ -123,8 +257,18 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-feature-settings: "tnum"; /* tabular numbers for currency display */
   }
   html {
     @apply font-sans;
+  }
+
+  /* Respect user motion preferences */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
   }
 }
