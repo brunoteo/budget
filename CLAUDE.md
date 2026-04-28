@@ -2,6 +2,8 @@
 
 A two-user personal-budget web application replacing a manual Google Sheet. Each spouse has an isolated account with their own data and their own pay-cycle (e.g., 27th-to-26th, 10th-to-9th). The app's distinguishing feature is paycheck-day-aligned monthly cycles. Italian-only UI. Mobile-first.
 
+**Status:** MVP shipped (Plan 1). Plans 2 (Wallet CSV import) and 3 (PWA + production hardening) pending.
+
 ## Tech stack
 
 - **Next.js 16** (App Router, Server Components, Server Actions) + **TypeScript strict** (`noUncheckedIndexedAccess: true`)
