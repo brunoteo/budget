@@ -1,5 +1,6 @@
 import { getDashboardForToday } from "@/server/queries/dashboard";
 import { KpiCard } from "@/components/kpi-card";
+import { PacingBar } from "@/components/pacing-bar";
 import { AppHeader } from "@/components/app-header";
 import { Fab } from "@/components/fab";
 import { copy } from "@/lib/copy";
@@ -26,6 +27,11 @@ export default async function DashboardPage() {
           <KpiCard label={c.remaining} primary={data.kpi.totalRemaining} secondary={c.consumed(pct(data.kpi.percentConsumed))} />
           <KpiCard label={c.percentSalary} primary={pct(data.kpi.percentOfSalarySpent)} />
         </section>
+        <PacingBar
+          percentConsumed={data.kpi.percentConsumed}
+          cycleProgress={data.kpi.cycleProgress}
+          paceDelta={data.kpi.paceDelta}
+        />
       </main>
       <Fab />
     </>
