@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { computeCycleForDate, nextCycle } from "@/lib/cycle/compute";
+import { cycleLabel } from "@/lib/cycle/label";
 
 describe("computeCycleForDate", () => {
   it("standard month: today=Apr 28, start_day=27 → cycle Apr 27 to May 26", () => {
@@ -61,5 +62,14 @@ describe("nextCycle", () => {
     const next = nextCycle({ start: "2026-01-31", end: "2026-02-27" }, 31);
     expect(next.start).toBe("2026-02-28");
     expect(next.end).toBe("2026-03-30");
+  });
+});
+
+describe("cycleLabel", () => {
+  it("formats same-year cycle in short Italian", () => {
+    expect(cycleLabel({ start: "2026-03-27", end: "2026-04-26" })).toBe("27 mar – 26 apr 2026");
+  });
+  it("includes years when crossing a year boundary", () => {
+    expect(cycleLabel({ start: "2025-12-27", end: "2026-01-26" })).toBe("27 dic 2025 – 26 gen 2026");
   });
 });
