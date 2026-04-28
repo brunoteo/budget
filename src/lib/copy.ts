@@ -1,5 +1,5 @@
 export const copy = {
-  app: { title: "Budget" },
+  app: { title: "Budget", description: "Budget mensile per coppia" },
   auth: {
     loginTitle: "Accedi",
     signupTitle: "Crea account",
@@ -16,7 +16,7 @@ export const copy = {
     goSignup: "Registrati",
     errorGeneric: "Si è verificato un errore. Riprova.",
   },
-  header: { settings: "Impostazioni", logout: "Esci" },
+  header: { settings: "Impostazioni", logout: "Esci", cycle: "Ciclo" },
   fab: { addExpense: "Aggiungi spesa" },
   dashboard: {
     salary: "Stipendio",
@@ -70,5 +70,7 @@ export const copy = {
   trends: {
     title: "Andamento — ultimi 6 cicli",
     needMoreData: "Servono almeno due cicli per vedere l'andamento.",
+    budgetSeries: "Budget",
+    spentSeries: "Speso",
   },
 } as const;

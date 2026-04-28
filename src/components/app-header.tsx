@@ -9,7 +9,7 @@ export function AppHeader({ displayName, range }: { displayName: string; range: 
     <header className="sticky top-0 z-10 border-b border-clay-200 bg-clay-50/95 backdrop-blur">
       <div className="mx-auto flex max-w-3xl items-center justify-between gap-3 px-4 py-3">
         <div>
-          <div className="text-xs uppercase tracking-wide text-clay-600">Ciclo</div>
+          <div className="text-xs uppercase tracking-wide text-clay-600">{copy.header.cycle}</div>
           <div className="font-display text-base font-semibold text-clay-900">{cycleLabel(range)}</div>
         </div>
         <div className="flex items-center gap-3">

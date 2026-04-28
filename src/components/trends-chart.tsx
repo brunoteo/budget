@@ -1,6 +1,7 @@
 "use client";
 import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { formatEur } from "@/lib/format/eur";
+import { copy } from "@/lib/copy";
 import type { TrendCycle } from "@/server/queries/trends";
 
 export function TrendsChart({ data }: { data: TrendCycle[] }) {
@@ -13,8 +14,8 @@ export function TrendsChart({ data }: { data: TrendCycle[] }) {
           <YAxis tick={{ fontSize: 11 }} tickFormatter={(v) => formatEur(Number(v))} />
           <Tooltip formatter={(v) => formatEur(Number(v))} />
           <Legend />
-          <Bar dataKey="total_budget" name="Budget" fill="oklch(0.648 0.052 60)" />
-          <Bar dataKey="total_spent" name="Speso" fill="oklch(0.581 0.133 38)" />
+          <Bar dataKey="total_budget" name={copy.trends.budgetSeries} fill="oklch(0.648 0.052 60)" />
+          <Bar dataKey="total_spent" name={copy.trends.spentSeries} fill="oklch(0.581 0.133 38)" />
         </BarChart>
       </ResponsiveContainer>
     </div>
