@@ -16,4 +16,6 @@ export const copy = {
     goSignup: "Registrati",
     errorGeneric: "Si è verificato un errore. Riprova.",
   },
+  header: { settings: "Impostazioni", logout: "Esci" },
+  fab: { addExpense: "Aggiungi spesa" },
 } as const;
