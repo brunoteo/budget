@@ -6,7 +6,7 @@ export default function SignupPage() {
   return (
     <main className="mx-auto max-w-sm p-4 space-y-4">
       <h1 className="text-2xl font-semibold">{copy.auth.signupTitle}</h1>
-      <form action={async (fd) => { await signupAction(fd); }} className="space-y-3">
+      <form action={async (fd) => { "use server"; await signupAction(fd); }} className="space-y-3">
         <label className="block">
           <span className="text-sm">{copy.auth.displayName}</span>
           <input name="displayName" required maxLength={60} className="mt-1 w-full rounded border p-3" />

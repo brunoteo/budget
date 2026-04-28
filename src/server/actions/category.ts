@@ -2,6 +2,7 @@
 import { z } from "zod";
 import { getServerSupabase } from "@/lib/db/server";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 
 const CreateSchema = z.object({
   cycleId: z.string().uuid(),
@@ -24,8 +25,7 @@ export async function createCategoryAction(formData: FormData) {
   });
   if (error) return { error: error.message };
   revalidatePath("/");
-  revalidatePath("/categories");
-  return { ok: true };
+  redirect("/categories");
 }
 
 export async function updateCategoryAction(formData: FormData) {

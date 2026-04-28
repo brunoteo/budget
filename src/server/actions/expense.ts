@@ -3,6 +3,7 @@ import { z } from "zod";
 import { getServerSupabase } from "@/lib/db/server";
 import { computeCycleForDate } from "@/lib/cycle/compute";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 
 const ExpenseSchema = z.object({
   amount: z.coerce.number().nonnegative(),
@@ -46,7 +47,7 @@ export async function createExpenseAction(formData: FormData) {
   });
   if (error) return { error: error.message };
   revalidatePath("/");
-  return { ok: true };
+  redirect("/");
 }
 
 export async function deleteExpenseAction(id: string) {
