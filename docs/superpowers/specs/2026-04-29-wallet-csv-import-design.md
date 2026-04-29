@@ -80,12 +80,13 @@ Same function runs in the browser (for within-batch dedup display) and on the se
 For each row, given the row's target `cycleId` (resolved via `computeCycleForDate(occurredOn, profile.cycle_start_day)`), the resolver computes:
 
 1. If `import_mappings` has a row for `(user_id, wallet_category)` → resolved by **mapping**, target = `app_category_name`.
-2. Else if any category in the row's target cycle has `foldName(name) === foldName(walletCategory)` → resolved by **auto-match**, target = the exact app name found.
-3. Else → **unmapped**.
+2. Else → **unmapped**.
 
-Resolution is per-row and per-cycle: a Wallet category that matches by name in cycle A but not in cycle B will be auto-matched in A and unmapped in B. The mapping table is global per user (cycle-independent), but the auto-match step always uses only the row's own cycle's categories.
+There is no auto-match by name. Even when a Wallet category and an app category share the same string (e.g. Wallet "Carburante" and app "Carburante"), the *first* import requires the user to explicitly pick the app category from the staging dropdown. That pick persists to `import_mappings` and resolves automatically on subsequent imports.
 
-Auto-matches are *not* persisted to `import_mappings`. They are recomputed every import. Persisting them would create surprise behavior if the user later renames an app category. The user's *explicit* choice on a previously-unmapped category *is* persisted.
+This is intentional for v1: it forces a deliberate, auditable mapping decision at first encounter. Auto-match-by-name is listed as a deferred enhancement in §11.
+
+`foldName` (from `lib/import/normalize.ts`) is still used at *commit time* — when looking up the user-typed `app_category_name` against the actual `categories.name` rows in the target cycle, the comparison is case- and accent-insensitive so trivial casing drift between cycles doesn't break commits.
 
 ### 4.6 Duplicate detector — server-side, in `prepareImportAction`
 
@@ -112,7 +113,7 @@ type PreparedRow = {
   walletCategory: string;
   cycleId: string | null;       // null = no existing cycle covers this date (will be lazy-created at commit)
   cycleRange: { startDate: string; endDate: string }; // computed even when cycleId is null
-  resolved: { kind: "mapping" | "auto"; appCategoryName: string }
+  resolved: { kind: "mapping"; appCategoryName: string }
           | { kind: "unmapped" };
   isDuplicate: boolean;
 };
@@ -438,7 +439,7 @@ mappings: {
     → lib/import/filter.ts → { kept, counts }
     → POST kept rows to prepareImportAction
 [Server]
-    → resolve mappings + auto-match per cycle
+    → resolve mappings (explicit only — no auto-match by name)
     → fingerprint + dedup query
     → return Prepared
 [Browser]
@@ -517,7 +518,7 @@ mappings: {
 
 ## 11. Open questions deferred to plan 3 (or later)
 
-- Persist auto-match decisions opportunistically? (Currently recomputed every import.)
+- Auto-match by name on first encounter (skip the manual pick when Wallet and app category names already coincide).
 - Multi-cycle backfill (>1 cycle into the past).
 - Import history page with delete-by-import-id beyond session.
 - Skip-category mappings (`Wallet → ignore`).
