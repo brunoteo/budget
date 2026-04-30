@@ -1,6 +1,7 @@
 import { copy } from "@/lib/copy";
 import { getMappings } from "@/server/queries/import";
 import { EditDrawer } from "./_components/edit-drawer";
+import { BackLink } from "@/components/back-link";
 
 export const metadata = { title: copy.mappings.title };
 
@@ -8,7 +9,8 @@ export default async function MappingsPage() {
   const mappings = await getMappings();
   return (
     <main className="min-h-dvh bg-background pb-12">
-      <header className="px-6 pt-6 pb-4">
+      <header className="flex items-center gap-2 px-4 pt-4 pb-4">
+        <BackLink href="/settings" label={copy.header.back} />
         <h1 className="font-display text-3xl text-clay-900">{copy.mappings.title}</h1>
       </header>
       {mappings.length === 0 ? (

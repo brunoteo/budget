@@ -16,7 +16,7 @@ export const copy = {
     goSignup: "Registrati",
     errorGeneric: "Si è verificato un errore. Riprova.",
   },
-  header: { settings: "Impostazioni", logout: "Esci", cycle: "Ciclo", categories: "Categorie" },
+  header: { settings: "Impostazioni", logout: "Esci", cycle: "Ciclo", categories: "Categorie", back: "Indietro" },
   fab: { addExpense: "Aggiungi spesa" },
   dashboard: {
     salary: "Stipendio",

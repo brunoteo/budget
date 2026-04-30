@@ -4,6 +4,7 @@ import { updateProfileAction } from "@/server/actions/profile";
 import { setCycleSalaryAction } from "@/server/actions/cycle";
 import { getDashboardForToday } from "@/server/queries/dashboard";
 import { redirect } from "next/navigation";
+import { BackLink } from "@/components/back-link";
 
 export const dynamic = "force-dynamic";
 
@@ -14,7 +15,10 @@ export default async function SettingsPage() {
 
   return (
     <main className="mx-auto max-w-md space-y-6 p-4">
-      <h1 className="font-display text-xl font-semibold text-clay-900">{c.title}</h1>
+      <div className="flex items-center gap-2">
+        <BackLink label={copy.header.back} />
+        <h1 className="font-display text-xl font-semibold text-clay-900">{c.title}</h1>
+      </div>
 
       <form
         action={async (fd) => { "use server"; await updateProfileAction(fd); }}
