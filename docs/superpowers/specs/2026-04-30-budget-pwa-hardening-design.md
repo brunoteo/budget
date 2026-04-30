@@ -8,7 +8,9 @@
 
 ## 1. Goal
 
-Make the budget app feel like an installed mobile app on both spouses' phones, give every Server Action either an inline error or a toast (no more silent failures), and lock down the surface area to what a two-user couple's app actually needs. No new functionality — this plan is about *trust* and *polish* for daily use.
+Make the budget app feel like an installed mobile app on both spouses' Android phones, give every Server Action either an inline error or a toast (no more silent failures), and lock down the surface area to what a two-user couple's app actually needs. No new functionality — this plan is about *trust* and *polish* for daily use.
+
+**Target devices:** Android only (Chrome and Chromium-based). iOS Safari is **not a target** for this plan — no apple-touch icons, no `appleWebApp` metadata, no iOS Safari Add-to-Home-Screen path. If iOS becomes relevant later, it gets its own follow-up.
 
 The app already runs in production (`feat/wallet-csv-import` merged on 2026-04-29). Both real accounts already exist on the hosted Supabase project. From this plan onwards, **production never opens new accounts**.
 
@@ -36,7 +38,7 @@ Five focused workstreams. Each is independently testable and shippable. They tou
 |---|-----------|------------|-------------|
 | 1 | Signup lockdown | — | `src/proxy.ts`, `src/app/signup/page.tsx`, `src/app/login/page.tsx`, `src/server/actions/auth.ts`, `src/lib/copy.ts`, `docs/deploy.md` |
 | 2 | Toast + form-error UX | `src/components/ui/sonner.tsx` (shadcn), `src/server/actions/result.ts` | `src/app/layout.tsx`, `src/app/login/page.tsx`, `src/app/signup/page.tsx`, `src/app/expenses/new/_components/*`, `src/app/categories/_components/*`, `src/app/settings/_components/*`, all 6 files under `src/server/actions/` |
-| 3 | PWA shell | `src/app/manifest.ts`, `src/app/icon.tsx`, `src/app/apple-icon.tsx`, `public/sw.js`, `src/components/sw-register.tsx`, `src/app/icon.svg` | `src/app/layout.tsx` (viewport + appleWebApp), `src/lib/copy.ts` |
+| 3 | PWA shell (Android only) | `src/app/manifest.ts`, `public/sw.js`, `src/components/sw-register.tsx`, `public/icon.svg`, generated PNGs in `public/` | `src/app/layout.tsx` (viewport meta), `src/lib/copy.ts`, `src/app/favicon.ico` (replaced) |
 | 4 | Accessibility quick wins | — | `src/app/globals.css` (focus-visible, prefers-reduced-motion), targeted icon-button files for `aria-label` |
 | 5 | Security minimums | — | `src/proxy.ts` (CSP nonce + headers), `next.config.ts` (security headers), `docs/deploy.md` (recovery + backups notes), `package.json` / lockfile (Dependabot) |
 
@@ -49,7 +51,7 @@ No new database tables. No new RLS policies. No new Server Actions beyond the re
 │  │  Layout                  │   │  Service Worker       │  │
 │  │  - Toaster (sonner)      │   │  - no-op fetch handler│  │
 │  │  - viewport.themeColor   │   │  - install / activate │  │
-│  │  - appleWebApp meta      │   │    (no caching)       │  │
+│  │  - manifest.webmanifest  │   │    (no caching)       │  │
 │  └──────────┬───────────────┘   └───────────────────────┘  │
 │             │ form action / fetch                          │
 └─────────────┼──────────────────────────────────────────────┘
@@ -191,11 +193,13 @@ Import flow already has its own success screen — its existing copy stays in pl
 
 Server Actions wrap their happy path in a top-level `try/catch`. Caught exceptions return `{ ok: false, fieldErrors: {}, formError: copy.toast.unexpectedError }`. The page chooses to render this inline (auth, settings) or via toast (mutation that doesn't redirect). RLS-rejection errors flow through this same path; the user sees the generic message, the original error is logged on the server.
 
-## 6. Workstream 3 — PWA shell
+## 6. Workstream 3 — PWA shell (Android only)
 
-**Outcome:** "Aggiungi alla schermata Home" on iOS Safari and Android Chrome installs the app with the right name, icon, and theme color. Once installed, opening the icon launches the standalone PWA chrome (no Safari URL bar).
+**Outcome:** Android Chrome's "Installa l'app" menu entry installs the app with the right name, icon, and theme color. Once installed, opening the icon launches the standalone PWA chrome (no browser URL bar).
 
-**Online-only.** No offline write queue, no background sync, no install-prompt UI. The service worker exists only because Chromium-based browsers won't show their install affordance without one — the SW does no caching.
+**Scope is deliberately Android-only.** iOS Safari is not a target — no apple-touch icons, no `appleWebApp` metadata, no Safari "Aggiungi alla schermata Home" testing. This halves the icon-asset matrix and removes a class of iOS-standalone-mode quirks.
+
+**Online-only.** No offline write queue, no background sync, no install-prompt UI. The service worker exists only because Chromium browsers won't show their install affordance without one — the SW does no caching.
 
 ### 6.1 Manifest — `src/app/manifest.ts`
 
@@ -230,17 +234,17 @@ The hex literals are sRGB approximations of our `--color-clay-50` and `--color-t
 
 Three PNGs in `public/`, generated from a single source SVG `public/icon.svg`:
 
-- **`/icon-192.png`** — 192×192, transparent corners, full-bleed `terra-500` circle with a `clay-50` letter "**B**" set in DM Serif Display.
-- **`/icon-512.png`** — same, scaled up.
-- **`/icon-mask-512.png`** — maskable variant: `terra-500` fills the entire 512×512 (no transparency); the "B" sits inside the safe area (centered, ~80% of inner circle radius). Required so Android adaptive icons don't crop.
+- **`/icon-192.png`** — 192×192, transparent corners, full-bleed `terra-500` circle with a `clay-50` letter "**B**" set in DM Serif Display. Used by Chrome's tab/install affordance.
+- **`/icon-512.png`** — same, scaled up. Used by the OS launcher.
+- **`/icon-mask-512.png`** — maskable variant: `terra-500` fills the entire 512×512 (no transparency); the "B" sits inside the safe area (centered, ~80% of inner circle radius). Required so Android adaptive icons (Pixel circle, Samsung squircle, etc.) don't crop the glyph.
 
 Generation: a one-shot script `scripts/generate-icons.ts` (kept out of `pnpm build`) takes `public/icon.svg` and emits the three PNGs via `sharp`. Output committed to `public/`. `sharp` is added as a `devDependency` only; runtime stays untouched.
 
-For Apple devices, **`src/app/apple-icon.tsx`** uses Next's file-based metadata convention to render a 180×180 `apple-touch-icon` with the same design (no transparency, rounded by iOS automatically). Co-located with the layout so Next emits the `<link rel="apple-touch-icon" />` tag automatically.
+A new **`src/app/favicon.ico`** replaces the existing one with the same brand mark at 32×32 + 16×16, so the browser tab icon matches the PWA icon. Generated by the same script. No `src/app/icon.tsx` (Next would emit a redundant `<link rel="icon">` alongside the manifest icons; the static `favicon.ico` is enough).
 
 ### 6.3 Layout meta — `src/app/layout.tsx`
 
-Two additions to the existing file:
+One addition (viewport export) and a small metadata tweak:
 
 ```ts
 export const viewport: Viewport = {
@@ -248,22 +252,19 @@ export const viewport: Viewport = {
   colorScheme: "light",
   width: "device-width",
   initialScale: 1,
-  viewportFit: "cover",             // safe-area awareness for iPhone notch
+  viewportFit: "cover",             // edge-to-edge on Android, accounts for gesture bar
 };
 
 export const metadata: Metadata = {
   title: copy.app.title,
   description: copy.app.description,
-  appleWebApp: {
-    capable: true,
-    title: copy.app.title,         // standalone-launch app name on iOS
-    statusBarStyle: "default",
-  },
   formatDetection: { telephone: false, email: false, address: false },
 };
 ```
 
-Body needs `pb-[env(safe-area-inset-bottom)]` and `pt-[env(safe-area-inset-top)]` utilities (added once in `globals.css` as `.safe-area`) so content doesn't slide under the iOS home indicator in standalone mode.
+No `appleWebApp` block — Android only.
+
+Body needs `pb-[env(safe-area-inset-bottom)]` and `pt-[env(safe-area-inset-top)]` utilities (added once in `globals.css` as `.safe-area`) so content doesn't slide under the Android gesture-navigation bar or under a Pixel/Samsung punch-hole camera in standalone mode.
 
 ### 6.4 Service worker — `public/sw.js` + `src/components/sw-register.tsx`
 
@@ -296,12 +297,11 @@ The `process.env.NODE_ENV` check prevents the SW from interfering with HMR in `p
 
 ### 6.5 Install affordance
 
-None in v1. We rely on the OS's native install path:
+None in v1. We rely on Chrome's native install path:
 
-- **iOS Safari:** Share → "Aggiungi alla schermata Home"
-- **Android Chrome:** triple-dot menu → "Installa l'app"
+- **Android Chrome:** triple-dot menu → "Installa l'app". On many devices Chrome also surfaces a passive install banner / address-bar icon when the manifest + SW + icon criteria are satisfied.
 
-Custom install banners (`beforeinstallprompt`) are out of scope. If we later want a "Install Budget" prompt on a settings page, that's its own follow-up.
+Custom install banners (`beforeinstallprompt`) are out of scope. If we later want a manual "Installa Budget" button on a settings page, that's its own follow-up.
 
 ## 7. Workstream 4 — accessibility quick wins
 
@@ -433,7 +433,7 @@ Each workstream gets a tight slice of new tests; nothing tests the framework's o
 |-----------|------|------------------------------------------|---------------------|
 | 1 — signup lockdown | `src/proxy.test.ts` (table test: `/signup` rewrites to 404 when env not `true`; passes through when `true`) | `signupAction.test.ts` — when `NEXT_PUBLIC_ALLOW_SIGNUP !== "true"`, returns `formError` and creates no auth user | `signup-disabled.spec.ts` — visit `/signup` in production-mode build, expect 404; link absent on `/login` |
 | 2 — toast + form errors | `result.test.ts` (`fromZod` mapping; happy path) | each Server Action's failure branch returns the new `ActionResult` shape | `login-bad-password.spec.ts` (existing E2E updated) — bad password shows inline error, password field cleared, button re-enabled. Add `expense-add-toast.spec.ts` — added expense triggers toast on dashboard |
-| 3 — PWA | — | — | `pwa-manifest.spec.ts` — request `/manifest.webmanifest`, parse JSON, assert `name`, `start_url`, `theme_color`, three icons. `apple-touch.spec.ts` — assert `<link rel="apple-touch-icon">` in HTML head |
+| 3 — PWA | — | — | `pwa-manifest.spec.ts` — request `/manifest.webmanifest`, parse JSON, assert `name`, `start_url`, `theme_color`, three icons. `pwa-meta.spec.ts` — assert no `apple-touch-icon` / `apple-mobile-web-app-*` tags (we shouldn't emit any), `theme-color` meta present, `viewport-fit=cover` |
 | 4 — accessibility | — | — | `a11y-focus-ring.spec.ts` — Tab through `/login`, assert `:focus-visible` outline on every interactive element via `getComputedStyle`. `reduced-motion.spec.ts` emulating `prefers-reduced-motion: reduce` — animation durations ≤ 1ms |
 | 5 — security | — | `proxy.test.ts` — CSP header present, contains `nonce-`, contains the Supabase URL in `connect-src`, contains `frame-ancestors 'none'` | `security-headers.spec.ts` — request `/`, assert all four `next.config.ts` headers + the CSP from proxy |
 
@@ -446,7 +446,7 @@ A single PR per workstream, in this order. Each PR is independently mergeable, s
 1. **PR #1 — signup lockdown.** Smallest blast radius, immediate security win. Includes deploy-doc updates and the Supabase dashboard step. The dashboard toggle happens as part of the PR's deploy checklist; the env var is set in Vercel before merge.
 2. **PR #2 — security headers + CSP.** Independent of others; lands the `proxy.ts` + `next.config.ts` changes and the Dependabot bump. Tests catch any header-blocked behavior locally.
 3. **PR #3 — toast + form-error UX.** Bigger surface area. Includes the `ActionResult` migration of all six action files in one go (changing all callers atomically is cheaper than a half-migrated state). Manual smoke at mobile viewport before merge.
-4. **PR #4 — PWA shell.** Manifest, icons, SW, layout meta, install instructions in `docs/deploy.md`. After merge, manually test "Add to Home Screen" on at least one iOS device and one Android device before declaring done.
+4. **PR #4 — PWA shell.** Manifest, icons, SW, layout meta, install instructions in `docs/deploy.md`. After merge, manually test "Installa l'app" on each spouse's Android phone before declaring done.
 5. **PR #5 — accessibility quick wins.** CSS-only changes plus aria-label sweep. Smallest visual diff; ships last because the CSS rules apply on top of any focus styles introduced earlier.
 
 `ROADMAP.md` is updated in PR #5 (or a follow-up doc commit) to mark Plan 3 as shipped.
@@ -457,7 +457,7 @@ A single PR per workstream, in this order. Each PR is independently mergeable, s
 |------|-----------|--------|-----------|
 | CSP nonce breaks Supabase realtime / inline styles from third-party libs | Medium | Page renders blank or breaks silently | Develop the CSP locally with browser-console CSP-violation logging; iterate the directives until clean. Tests assert key directives present. Roll out in PR #2 with manual smoke before merge. |
 | Service worker caches stale assets after deploy | Low (SW does no caching) | App stuck on old version | SW is deliberately no-op. If we ever add caching, that's a new design decision. |
-| iOS PWA standalone mode hides the URL — users can't share a link | Low | Mild annoyance | Acceptable for a two-user app. Not worth a custom share button in v1. |
+| Android Chrome standalone mode hides the URL — users can't share a link | Low | Mild annoyance | Acceptable for a two-user app. Not worth a custom share button in v1. |
 | `useActionState` migration leaves a stale form state on re-submit | Medium | Wrong error persists across submits | Always reset state via the explicit return path; integration tests cover the "fix and resubmit" sequence per form. |
 | Maskable icon mis-cropped on Android | Low | Ugly icon | Test with [maskable.app](https://maskable.app) before committing; safe-area stays at 80% radius. |
 | Dependabot bump cascades into a breaking transitive change | Low | Build fails | The fix lives on its own PR (#2's tail end); revert is a single git commit. |
