@@ -1,8 +1,10 @@
+import Link from "next/link";
 import { copy } from "@/lib/copy";
 import { updateProfileAction } from "@/server/actions/profile";
 import { setCycleSalaryAction } from "@/server/actions/cycle";
 import { getDashboardForToday } from "@/server/queries/dashboard";
 import { redirect } from "next/navigation";
+import { BackLink } from "@/components/back-link";
 
 export const dynamic = "force-dynamic";
 
@@ -13,7 +15,10 @@ export default async function SettingsPage() {
 
   return (
     <main className="mx-auto max-w-md space-y-6 p-4">
-      <h1 className="font-display text-xl font-semibold text-clay-900">{c.title}</h1>
+      <div className="flex items-center gap-2">
+        <BackLink label={copy.header.back} />
+        <h1 className="font-display text-xl font-semibold text-clay-900">{c.title}</h1>
+      </div>
 
       <form
         action={async (fd) => { "use server"; await updateProfileAction(fd); }}
@@ -51,6 +56,14 @@ export default async function SettingsPage() {
         </label>
         <button type="submit" className="w-full rounded-lg bg-terra-500 p-3 text-clay-50">{c.save}</button>
       </form>
+
+      <Link
+        href="/settings/mappings"
+        className="flex h-12 w-full items-center justify-between rounded-xl border border-clay-200 bg-clay-50 px-3 font-sans text-clay-900 shadow-sm"
+      >
+        <span>{copy.mappings.settingsLink}</span>
+        <span aria-hidden className="text-clay-400">›</span>
+      </Link>
     </main>
   );
 }
