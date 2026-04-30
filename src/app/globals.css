@@ -6,10 +6,11 @@
 
 @theme inline {
   /* ─── Font Families ─── */
-  --font-sans: "DM Sans", system-ui, sans-serif;
-  --font-mono: "DM Mono", "Courier New", monospace;
-  --font-display: "DM Serif Display", Georgia, serif;
-  --font-heading: "DM Serif Display", Georgia, serif;
+  /* --font-dm-* are emitted by next/font in src/app/layout.tsx. */
+  --font-sans: var(--font-dm-sans), "DM Sans", system-ui, sans-serif;
+  --font-mono: var(--font-dm-mono), "DM Mono", "Courier New", monospace;
+  --font-display: var(--font-dm-display), "DM Serif Display", Georgia, serif;
+  --font-heading: var(--font-dm-display), "DM Serif Display", Georgia, serif;
 
   /* ─── Brand / Accent (Terracotta) ─── */
   --color-terra-400: oklch(0.672 0.120 40);

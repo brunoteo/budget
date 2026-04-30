@@ -3,6 +3,8 @@ import { useActionState } from "react";
 import { copy } from "@/lib/copy";
 import { setCycleSalaryAction } from "@/server/actions/cycle";
 import { initialResult } from "@/server/actions/result";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 type Field = "cycleId" | "salary";
 
@@ -20,40 +22,41 @@ export function CycleSalaryForm({
   return (
     <form
       action={action}
-      className="space-y-2 rounded-xl border border-clay-200 bg-clay-50 p-3 shadow-sm"
       noValidate
+      className="space-y-4 rounded-lg border border-border bg-surface p-5 shadow-sm"
     >
-      <h2 className="font-display font-semibold text-clay-900">{c.currentCycleSalary}</h2>
+      <h2 className="font-display text-lg text-text-primary">{c.currentCycleSalary}</h2>
       <input type="hidden" name="cycleId" value={cycleId} />
-      <label className="block">
-        <span className="text-sm text-clay-700">{c.salary}</span>
-        <input
+
+      <div className="space-y-2">
+        <label htmlFor="cycle-salary" className="block text-sm font-medium text-text-primary">
+          {c.salary}
+        </label>
+        <Input
+          id="cycle-salary"
           name="salary"
           type="number"
           step="0.01"
           min={0}
           defaultValue={defaultSalary ?? ""}
+          className="font-mono tabular-nums"
           aria-invalid={fieldErr("salary") ? true : undefined}
           aria-describedby={fieldErr("salary") ? "salary-err" : undefined}
-          className="mt-1 w-full rounded-lg border border-clay-300 bg-clay-50 p-3 font-mono tabular-nums"
         />
         {fieldErr("salary") && (
-          <span id="salary-err" className="block mt-1 text-sm text-terra-700" aria-live="polite">
+          <span id="salary-err" className="block text-sm text-destructive" aria-live="polite">
             {fieldErr("salary")}
           </span>
         )}
-      </label>
+      </div>
+
       {!state.ok && state.formError && (
-        <p className="text-sm text-terra-700" aria-live="polite">{state.formError}</p>
+        <p className="text-sm text-destructive" aria-live="polite">{state.formError}</p>
       )}
-      <button
-        type="submit"
-        disabled={pending}
-        data-focus-ring="contrast"
-        className="w-full rounded-lg bg-terra-500 p-3 text-clay-50 disabled:opacity-60"
-      >
+
+      <Button type="submit" disabled={pending} size="lg" className="w-full">
         {c.save}
-      </button>
+      </Button>
     </form>
   );
 }

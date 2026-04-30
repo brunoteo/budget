@@ -35,7 +35,7 @@ export default async function DashboardPage() {
           paceDelta={data.kpi.paceDelta}
         />
         <section className="space-y-2">
-          <h2 className="text-xs uppercase tracking-wider text-clay-600">
+          <h2 className="px-1 text-xs uppercase tracking-wider text-text-muted">
             {copy.dashboard.categoriesHeading} · {data.categories.length}
           </h2>
           {data.categories.map((cat) => {
@@ -55,8 +55,14 @@ export default async function DashboardPage() {
             );
           })}
           {data.categories.length === 0 && (
-            <div className="rounded-xl border border-clay-200 bg-clay-50 p-6 text-center text-clay-600">
-              {copy.dashboard.noCategories} <Link href="/categories" className="underline">{copy.dashboard.addOne}</Link>.
+            <div className="rounded-lg border border-dashed border-border bg-surface p-8 text-center">
+              <p className="text-text-muted">
+                {copy.dashboard.noCategories}{" "}
+                <Link href="/categories" className="font-medium text-accent underline-offset-4 hover:underline">
+                  {copy.dashboard.addOne}
+                </Link>
+                .
+              </p>
             </div>
           )}
         </section>
