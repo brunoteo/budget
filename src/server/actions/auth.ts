@@ -2,6 +2,7 @@
 import { z } from "zod";
 import { getServerSupabase } from "@/lib/db/server";
 import { redirect } from "next/navigation";
+import { copy } from "@/lib/copy";
 
 const SignupSchema = z.object({
   email: z.string().email(),
@@ -16,6 +17,9 @@ const LoginSchema = z.object({
 });
 
 export async function signupAction(formData: FormData) {
+  if (process.env.NEXT_PUBLIC_ALLOW_SIGNUP !== "true") {
+    return { error: copy.auth.signupDisabled };
+  }
   const parsed = SignupSchema.safeParse(Object.fromEntries(formData));
   if (!parsed.success) return { error: "Dati non validi." };
   const { email, password, displayName, cycleStartDay } = parsed.data;
