@@ -116,7 +116,9 @@ export type Database = {
           category_id: string
           created_at: string
           cycle_id: string
+          fingerprint: string | null
           id: string
+          import_id: string | null
           note: string | null
           occurred_on: string
         }
@@ -125,7 +127,9 @@ export type Database = {
           category_id: string
           created_at?: string
           cycle_id: string
+          fingerprint?: string | null
           id?: string
+          import_id?: string | null
           note?: string | null
           occurred_on: string
         }
@@ -134,7 +138,9 @@ export type Database = {
           category_id?: string
           created_at?: string
           cycle_id?: string
+          fingerprint?: string | null
           id?: string
+          import_id?: string | null
           note?: string | null
           occurred_on?: string
         }
@@ -151,6 +157,41 @@ export type Database = {
             columns: ["cycle_id"]
             isOneToOne: false
             referencedRelation: "cycles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      import_mappings: {
+        Row: {
+          app_category_name: string
+          created_at: string
+          id: string
+          updated_at: string
+          user_id: string
+          wallet_category: string
+        }
+        Insert: {
+          app_category_name: string
+          created_at?: string
+          id?: string
+          updated_at?: string
+          user_id: string
+          wallet_category: string
+        }
+        Update: {
+          app_category_name?: string
+          created_at?: string
+          id?: string
+          updated_at?: string
+          user_id?: string
+          wallet_category?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "import_mappings_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
