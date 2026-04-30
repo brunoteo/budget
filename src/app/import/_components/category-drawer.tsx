@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer";
 import { copy } from "@/lib/copy";
 import { formatRangeShort } from "@/lib/format/date";
@@ -12,8 +13,9 @@ type Props = {
 };
 
 export function CategoryDrawer({ trigger, cycleRange, options, onSelect }: Props) {
+  const [open, setOpen] = useState(false);
   return (
-    <Drawer>
+    <Drawer open={open} onOpenChange={setOpen}>
       <DrawerTrigger asChild>{trigger}</DrawerTrigger>
       <DrawerContent>
         <DrawerHeader>
@@ -27,7 +29,10 @@ export function CategoryDrawer({ trigger, cycleRange, options, onSelect }: Props
               <button
                 type="button"
                 className="flex h-12 w-full items-center px-6 text-left font-sans text-clay-900 hover:bg-clay-200"
-                onClick={() => onSelect(o.name)}
+                onClick={() => {
+                  onSelect(o.name);
+                  setOpen(false);
+                }}
               >
                 {o.name}
               </button>
