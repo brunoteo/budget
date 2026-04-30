@@ -7,6 +7,7 @@ The app ships in three numbered plans. Each plan is a self-contained slice that 
 | 1 | ✅ Shipped | MVP — manual entry, dashboard, KPIs | [`2026-04-28-budget-mvp.md`](superpowers/plans/2026-04-28-budget-mvp.md) |
 | 2 | ✅ Shipped | Wallet CSV import flow | [`2026-04-29-wallet-csv-import.md`](superpowers/plans/2026-04-29-wallet-csv-import.md) |
 | 3 | ✅ Shipped | PWA shell + production hardening | [`2026-04-30-budget-pwa-hardening.md`](superpowers/plans/2026-04-30-budget-pwa-hardening.md) |
+| 4 | ✅ Shipped | Supabase production hardening (publishable-key rename + deploy runbook) | [`2026-04-30-supabase-prod-hardening.md`](superpowers/plans/2026-04-30-supabase-prod-hardening.md) |
 
 ---
 
@@ -97,6 +98,18 @@ iOS PWA support, dark mode toggle, and design-system token-only CSS migration ar
 **Decision points before Plan 3 starts:**
 - Do we want native push, or is in-app-only enough? (Native push adds APNs/FCM complexity; web-push works on Chromium and now iOS Safari but not on iOS PWA in all states.)
 - Does the app need an admin dashboard for the two of you to spot data drift, or is Supabase Studio enough?
+
+---
+
+## Plan 4 — Supabase production hardening (shipped 2026-04-30)
+
+**Goal:** Cut over the public Supabase env var from the legacy anon-JWT name to the new `sb_publishable_*` name Supabase ships in fresh projects, and tighten `docs/deploy.md` so the production wiring runbook leaves no dashboard step undocumented.
+
+**Delivered:**
+- Phase 1: `NEXT_PUBLIC_SUPABASE_ANON_KEY` → `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` across server, browser, and middleware Supabase clients plus the integration-test helper and `.env.local.example`. No behavior change; the JWT value Supabase emits is unchanged.
+- Phase 2: `docs/deploy.md` Auth → URL Configuration promoted to a numbered step; publishable-key naming through the runbook; explicit "do NOT set service-role key in Vercel" callout.
+
+No new tables, no new server actions, no UI change. All existing tests still pass unchanged.
 
 ---
 
