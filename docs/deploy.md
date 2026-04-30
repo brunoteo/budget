@@ -53,7 +53,7 @@ pnpm exec supabase db push
 ## 4. Smoke-test production
 
 1. Open the production URL — you should land on `/login`.
-2. Click **Registrati** and sign up the first real account. Confirm the redirect to `/`.
+2. Sign in with one of the production accounts (signup is disabled in production — see §1 step 3 and §3 step 3; account creation is a manual operation in Supabase Studio, see §6). Confirm the redirect to `/`.
 3. Add a category, then an expense. Confirm the dashboard shows the KPI cards and the category list with the expense.
 4. Sign out and sign in again with the same credentials.
 5. Repeat for the second account from a fresh browser/incognito session.
