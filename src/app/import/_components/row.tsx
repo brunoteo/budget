@@ -23,9 +23,10 @@ type Props = {
   state: RowState;
   onToggleInclude: () => void;
   onPickCategory: (name: string) => void;
+  onCreateCategory: (name: string) => Promise<void>;
 };
 
-export function Row({ state, onToggleInclude, onPickCategory }: Props) {
+export function Row({ state, onToggleInclude, onPickCategory, onCreateCategory }: Props) {
   return (
     <article
       data-row-index={state.index}
@@ -75,6 +76,7 @@ export function Row({ state, onToggleInclude, onPickCategory }: Props) {
           cycleRange={state.cycleRange}
           options={state.categoryOptions}
           onSelect={(name) => onPickCategory(name)}
+          onCreate={onCreateCategory}
         />
       </div>
 

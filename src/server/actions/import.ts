@@ -310,3 +310,44 @@ export async function deleteMappingAction(rawPayload: unknown): Promise<{ ok: tr
   revalidatePath("/settings/mappings");
   return { ok: true };
 }
+
+const CreateCategoryForImportSchema = z.object({
+  occurredOn: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  name: z.string().min(1).max(80),
+});
+
+export type CreateCategoryForImportResult =
+  | { id: string; name: string; cycleId: string }
+  | { error: string };
+
+export async function createCategoryForImportAction(
+  raw: unknown,
+): Promise<CreateCategoryForImportResult> {
+  const parsed = CreateCategoryForImportSchema.safeParse(raw);
+  if (!parsed.success) return { error: "Dati non validi." };
+
+  const supabase = await getServerSupabase();
+  let cycleId: string;
+  try {
+    cycleId = await ensureCycleForDate(parsed.data.occurredOn);
+  } catch (e) {
+    return { error: e instanceof Error ? e.message : "Errore ciclo." };
+  }
+
+  const folded = foldName(parsed.data.name);
+  const { data: existing } = await supabase
+    .from("categories")
+    .select("id, name")
+    .eq("cycle_id", cycleId);
+  const dup = (existing ?? []).find((c) => foldName(c.name) === folded);
+  if (dup) return { id: dup.id, name: dup.name, cycleId };
+
+  const { data: created, error } = await supabase
+    .from("categories")
+    .insert({ cycle_id: cycleId, name: parsed.data.name, expected_amount: 0 })
+    .select("id, name")
+    .single();
+  if (error || !created) return { error: error?.message ?? "Errore creazione." };
+  revalidatePath("/");
+  return { id: created.id, name: created.name, cycleId };
+}
