@@ -31,6 +31,7 @@ export function Row({ state, onToggleInclude, onPickCategory }: Props) {
       data-row-index={state.index}
       onClick={(e) => {
         const t = e.target as HTMLElement;
+        if (!e.currentTarget.contains(t)) return;
         if (t.closest("[data-no-toggle]")) return;
         onToggleInclude();
       }}
