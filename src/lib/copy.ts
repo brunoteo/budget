@@ -127,4 +127,12 @@ export const copy = {
     settingsSaved: "Impostazioni salvate",
     unexpectedError: "Si è verificato un errore. Riprova.",
   },
+  errors: {
+    invalidInput: "Dati non validi.",
+    categoryHasExpenses: "Impossibile eliminare: la categoria ha spese.",
+    cycleNotFound: "Ciclo non trovato.",
+    noPreviousCycle: "Nessun ciclo precedente.",
+    previousCycleEmpty: "Il ciclo precedente non ha categorie.",
+    profileNotFound: "Profilo non trovato.",
+  },
 } as const;

@@ -37,7 +37,7 @@ export async function setCycleSalaryAction(
 
 export async function setCycleExtraIncomeAction(input: z.infer<typeof ExtraIncomeSchema>) {
   const parsed = ExtraIncomeSchema.safeParse(input);
-  if (!parsed.success) return { error: "Dati non validi." };
+  if (!parsed.success) return { error: copy.errors.invalidInput };
   const supabase = await getServerSupabase();
   const { error } = await supabase
     .from("cycles")
