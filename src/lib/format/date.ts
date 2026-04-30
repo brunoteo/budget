@@ -27,3 +27,7 @@ export function formatDateRange(start: string | Date, end: string | Date): strin
   }
   return `${shortDayMonthYear.format(s)} – ${shortDayMonthYear.format(e)}`;
 }
+
+export function formatRangeShort(start: string | Date, end: string | Date): string {
+  return `${shortDayMonth.format(toDate(start))} – ${shortDayMonth.format(toDate(end))}`;
+}

@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { CategoryEditorForm } from "@/components/category-editor-form";
 import { deleteCategoryAction, carryForwardCategoriesAction } from "@/server/actions/category";
 import { formatEur } from "@/lib/format/eur";
+import { BackLink } from "@/components/back-link";
 
 export const dynamic = "force-dynamic";
 
@@ -14,7 +15,10 @@ export default async function CategoriesPage() {
 
   return (
     <main className="mx-auto max-w-md space-y-4 p-4">
-      <h1 className="font-display text-xl font-semibold text-clay-900">{c.title}</h1>
+      <div className="flex items-center gap-2">
+        <BackLink label={copy.header.back} />
+        <h1 className="font-display text-xl font-semibold text-clay-900">{c.title}</h1>
+      </div>
 
       {data.categories.length === 0 && (
         <form action={async (fd) => { "use server"; await carryForwardCategoriesAction(fd); }}>

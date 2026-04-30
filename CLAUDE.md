@@ -2,7 +2,7 @@
 
 A two-user personal-budget web application replacing a manual Google Sheet. Each spouse has an isolated account with their own data and their own pay-cycle (e.g., 27th-to-26th, 10th-to-9th). The app's distinguishing feature is paycheck-day-aligned monthly cycles. Italian-only UI. Mobile-first.
 
-**Status:** MVP shipped (Plan 1). Plans 2 (Wallet CSV import) and 3 (PWA + production hardening) pending.
+**Status:** MVP shipped (Plan 1). Plan 2 (Wallet CSV import) shipped. Plan 3 (PWA + production hardening) pending.
 
 **Git author:** always commit as `brunoteo <brunoteo@hotmail.it>`. The local repo `.git/config` already pins `user.name` and `user.email` to these values — do not override them globally. Remote: `https://github.com/brunoteo/budget.git`.
 
@@ -21,11 +21,15 @@ A two-user personal-budget web application replacing a manual Google Sheet. Each
 ```
 src/
   app/                    # routes (pages + server actions co-located via app router)
+    /import               # Wallet CSV import flow
+    /settings/mappings    # persisted Wallet → app category mappings
   components/
     ui/                   # shadcn-derived primitives
   lib/
     db/                   # Supabase client factories (server.ts, client.ts) — all DB access
+      ensure-cycle.ts     # Lazy-create user's cycle for a date (shared by expense + import)
     cycle/                # PURE: cycle date math (no Next, no Supabase)
+    import/               # PURE: CSV parse, filter, fingerprint, name-fold for Wallet import
     kpi/                  # PURE: KPI computation
     format/               # PURE: Italian EUR / date formatting
     copy.ts               # Italian UI strings (single source)
@@ -39,7 +43,7 @@ tests/
   unit/                   # Pure libs only
   integration/            # Server Actions + RLS, run against local Supabase
   e2e/                    # Playwright
-  fixtures/               # Sample files (e.g. wallet/report_*.csv)
+  fixtures/               # Sample files (e.g. wallet/sample.csv)
 docs/superpowers/         # Specs and plans
 ```
 
