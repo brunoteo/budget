@@ -5,6 +5,7 @@ import "./globals.css";
 import { copy } from "@/lib/copy";
 import { Toaster } from "@/components/ui/sonner";
 import { ToastFromQuery } from "@/components/toast-from-query";
+import { SWRegister } from "@/components/sw-register";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -45,6 +46,7 @@ export default function RootLayout({
         <Suspense fallback={null}>
           <ToastFromQuery />
         </Suspense>
+        <SWRegister />
         <Toaster />
       </body>
     </html>
