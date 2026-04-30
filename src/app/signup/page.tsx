@@ -1,8 +1,10 @@
+import { notFound } from "next/navigation";
 import { signupAction } from "@/server/actions/auth";
 import { copy } from "@/lib/copy";
 import Link from "next/link";
 
 export default function SignupPage() {
+  if (process.env.NEXT_PUBLIC_ALLOW_SIGNUP !== "true") notFound();
   return (
     <main className="mx-auto max-w-sm p-4 space-y-4">
       <h1 className="text-2xl font-semibold">{copy.auth.signupTitle}</h1>
