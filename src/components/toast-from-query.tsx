@@ -1,6 +1,6 @@
 "use client";
 import { useEffect } from "react";
-import { useRouter, useSearchParams, usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { copy } from "@/lib/copy";
 
@@ -13,7 +13,6 @@ const TOASTS: Record<string, () => void> = {
 };
 
 export function ToastFromQuery() {
-  const router = useRouter();
   const pathname = usePathname();
   const params = useSearchParams();
   const key = params.get("toast");
@@ -25,8 +24,8 @@ export function ToastFromQuery() {
     const next = new URLSearchParams(params);
     next.delete("toast");
     const qs = next.toString();
-    router.replace(`${pathname}${qs ? `?${qs}` : ""}`, { scroll: false });
-  }, [key, params, pathname, router]);
+    window.history.replaceState(null, "", `${pathname}${qs ? `?${qs}` : ""}`);
+  }, [key, params, pathname]);
 
   return null;
 }
