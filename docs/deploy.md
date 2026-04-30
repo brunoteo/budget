@@ -17,12 +17,19 @@ This document describes how to take the Budget app from local development to pro
    - **Database password:** generate and store in your password manager.
 2. Once provisioned, open **Project Settings → API** and copy:
    - **Project URL** (e.g. `https://abcdefgh.supabase.co`).
-   - **anon public key** (used by the app at runtime).
+   - **Publishable key** (used by the app at runtime — appears under API Keys as `sb_publishable_*`).
    - **service_role key** (used by the CLI to push migrations; do NOT ship to the browser).
 3. Open **Project Settings → Auth → Email** and:
    - Enable **Email + Password**.
    - Disable **Confirm email** (single-couple app — emails are trusted).
    - Disable **"Allow new users to sign up"** (Authentication → Providers → Email). Both production accounts already exist; turning this off prevents the Supabase API from accepting any new signups even if the env-var guard is misconfigured.
+4. Open **Project Settings → Auth → URL Configuration** and set:
+   - **Site URL:** the Vercel production URL (e.g. `https://budget.vercel.app`). Set this *after* the first Vercel deploy in §3 — come back here to fill it in.
+   - **Additional Redirect URLs:** one entry per line:
+     - `http://localhost:3000/**` (local dev)
+     - `https://*-brunoteo.vercel.app/**` (Vercel preview deploys — replace `brunoteo` with your Vercel team slug)
+     - the production URL again as `https://budget.vercel.app/**` if your team slug differs
+   - These are the only URLs Supabase will accept as redirect targets after a magic-link / password-recovery click. Wrong list = recovery emails dead-end on a Supabase error page.
 
 ## 2. Push the schema to the hosted DB
 
@@ -44,9 +51,11 @@ pnpm exec supabase db push
    - Root directory: project root.
 3. Add **Environment Variables** (Production + Preview):
    - `NEXT_PUBLIC_SUPABASE_URL` = your Supabase project URL.
-   - `NEXT_PUBLIC_SUPABASE_ANON_KEY` = the anon public key.
+   - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` = the **publishable key** from Project Settings → API → API Keys (the `sb_publishable_*` value, not the legacy JWT).
    - `NEXT_PUBLIC_ALLOW_SIGNUP` = `false` (production) — disables `/signup` route, link, and Server Action. Set this **before** the first deploy. Local `.env.local` should set this to `true` so dev seeding and E2E tests still work.
-   - `SUPABASE_SERVICE_ROLE_KEY` is **not needed at runtime** — leave it out.
+
+> **Do NOT set `SUPABASE_SERVICE_ROLE_KEY` in Vercel.** It is local-tests-only (used by `tests/integration/_helpers.ts` to bypass RLS during test setup). Production code does not read it. Adding it to Vercel widens the attack surface for no benefit.
+
 4. Click **Deploy**. Wait for the first build to finish (~2 min).
 5. Copy the production URL.
 
@@ -73,12 +82,12 @@ Repeat for both spouses. iOS is not supported in this version.
 
 - **New migrations:** add a file under `supabase/migrations/`, commit, then run `pnpm exec supabase db push` from a machine linked to the project.
 - **Regenerating types after schema change:** locally, run `pnpm db:reset && pnpm db:types`, commit the regenerated `src/types/database.ts`.
-- **Rotating the anon key:** Supabase rotates server-side; update the Vercel env var and redeploy.
+- **Rotating the publishable key:** Supabase rotates server-side; update `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` in Vercel and redeploy. The same rotation flow applies to the legacy anon JWT if a Supabase migration ever forces a return to it.
 - **Logs:** Vercel functions logs surface server-action errors. Supabase logs are in **Project Settings → Logs**.
 
 ## Troubleshooting
 
-- **Auth callback fails on production:** confirm the production URL is allowed in **Project Settings → Auth → URL Configuration**.
+- **Auth callback fails on production:** confirm the production URL is allowed in **Project Settings → Auth → URL Configuration** (set up in §1 step 4).
 - **`db push` complains about a migration mismatch:** the local migrations diverged from what's on the hosted DB. Inspect with `pnpm exec supabase db diff` and resolve manually.
 - **RLS blocking unexpected queries:** check that the user is logged in (cookies present). Server queries get the user's auth context via `cookies()`. Service-role bypasses RLS — never use it from app code.
 
