@@ -22,6 +22,7 @@ This document describes how to take the Budget app from local development to pro
 3. Open **Project Settings → Auth → Email** and:
    - Enable **Email + Password**.
    - Disable **Confirm email** (single-couple app — emails are trusted).
+   - Disable **"Allow new users to sign up"** (Authentication → Providers → Email). Both production accounts already exist; turning this off prevents the Supabase API from accepting any new signups even if the env-var guard is misconfigured.
 
 ## 2. Push the schema to the hosted DB
 
@@ -44,6 +45,7 @@ pnpm exec supabase db push
 3. Add **Environment Variables** (Production + Preview):
    - `NEXT_PUBLIC_SUPABASE_URL` = your Supabase project URL.
    - `NEXT_PUBLIC_SUPABASE_ANON_KEY` = the anon public key.
+   - `NEXT_PUBLIC_ALLOW_SIGNUP` = `false` (production) — disables `/signup` route, link, and Server Action. Set this **before** the first deploy. Local `.env.local` should set this to `true` so dev seeding and E2E tests still work.
    - `SUPABASE_SERVICE_ROLE_KEY` is **not needed at runtime** — leave it out.
 4. Click **Deploy**. Wait for the first build to finish (~2 min).
 5. Copy the production URL.
@@ -68,3 +70,17 @@ pnpm exec supabase db push
 - **Auth callback fails on production:** confirm the production URL is allowed in **Project Settings → Auth → URL Configuration**.
 - **`db push` complains about a migration mismatch:** the local migrations diverged from what's on the hosted DB. Inspect with `pnpm exec supabase db diff` and resolve manually.
 - **RLS blocking unexpected queries:** check that the user is logged in (cookies present). Server queries get the user's auth context via `cookies()`. Service-role bypasses RLS — never use it from app code.
+
+## 6. Recovering an account
+
+If either user forgets their password:
+
+1. Open Supabase Studio for the production project → **Authentication → Users**.
+2. Find the user row, click the kebab menu → **Send password recovery**.
+3. The user receives a reset link by email and follows the standard Supabase reset flow (no in-app handler — Supabase hosts the form).
+
+If the user's email itself has changed: edit it in the same Users panel, then send recovery to the new address.
+
+## 7. Backups
+
+Supabase free tier ships with 1-day point-in-time recovery, automatic. If/when our data starts mattering, upgrade to **Pro** (US$25/mo per project) for 7-day PITR. No app-side backup runbook for now — the database is the source of truth and Supabase manages the snapshot.
