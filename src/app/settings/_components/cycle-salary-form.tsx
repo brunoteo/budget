@@ -49,6 +49,7 @@ export function CycleSalaryForm({
       <button
         type="submit"
         disabled={pending}
+        data-focus-ring="contrast"
         className="w-full rounded-lg bg-terra-500 p-3 text-clay-50 disabled:opacity-60"
       >
         {c.save}

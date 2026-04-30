@@ -23,7 +23,7 @@ export async function updateProfileAction(
   try {
     const supabase = await getServerSupabase();
     const { data: profile } = await supabase.from("profiles").select("id").single();
-    if (!profile) return { ok: false, fieldErrors: {}, formError: "Profilo non trovato." };
+    if (!profile) return { ok: false, fieldErrors: {}, formError: copy.errors.profileNotFound };
     const { error } = await supabase.from("profiles").update({
       display_name: parsed.data.displayName,
       cycle_start_day: parsed.data.cycleStartDay,

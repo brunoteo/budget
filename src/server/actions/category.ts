@@ -64,7 +64,7 @@ export async function updateCategoryAction(
 export async function deleteCategoryAction(id: string) {
   const supabase = await getServerSupabase();
   const { error } = await supabase.from("categories").delete().eq("id", id);
-  if (error) return { error: "Impossibile eliminare: la categoria ha spese." };
+  if (error) return { error: copy.errors.categoryHasExpenses };
   revalidatePath("/");
   redirect("/categories?toast=categoryDeleted");
 }
@@ -73,11 +73,11 @@ const CarrySchema = z.object({ targetCycleId: z.string().uuid() });
 
 export async function carryForwardCategoriesAction(formData: FormData) {
   const parsed = CarrySchema.safeParse(Object.fromEntries(formData));
-  if (!parsed.success) return { error: "Dati non validi." };
+  if (!parsed.success) return { error: copy.errors.invalidInput };
   const supabase = await getServerSupabase();
 
   const { data: target } = await supabase.from("cycles").select("user_id, start_date").eq("id", parsed.data.targetCycleId).single();
-  if (!target) return { error: "Ciclo non trovato." };
+  if (!target) return { error: copy.errors.cycleNotFound };
 
   const { data: previous } = await supabase
     .from("cycles")
@@ -87,14 +87,14 @@ export async function carryForwardCategoriesAction(formData: FormData) {
     .order("start_date", { ascending: false })
     .limit(1)
     .maybeSingle();
-  if (!previous) return { error: "Nessun ciclo precedente." };
+  if (!previous) return { error: copy.errors.noPreviousCycle };
 
   const { data: prevCats } = await supabase
     .from("categories")
     .select("name, expected_amount, is_fixed, sort_order")
     .eq("cycle_id", previous.id)
     .order("sort_order");
-  if (!prevCats || prevCats.length === 0) return { error: "Il ciclo precedente non ha categorie." };
+  if (!prevCats || prevCats.length === 0) return { error: copy.errors.previousCycleEmpty };
 
   const rows = prevCats.map((c) => ({ ...c, cycle_id: parsed.data.targetCycleId }));
   const { error } = await supabase.from("categories").insert(rows);

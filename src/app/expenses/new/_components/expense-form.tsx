@@ -98,6 +98,7 @@ export function ExpenseForm({
         <button
           type="submit"
           disabled={pending}
+          data-focus-ring="contrast"
           className="flex-1 rounded-lg bg-terra-500 p-3 text-clay-50 shadow-sm disabled:opacity-60"
         >
           {c.submit}
