@@ -263,6 +263,18 @@
     @apply font-sans;
   }
 
+  :focus-visible {
+    outline: 2px solid var(--color-terra-500);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+  }
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
+  [data-focus-ring="contrast"]:focus-visible {
+    outline-color: var(--color-clay-50);
+  }
+
   /* Respect user motion preferences */
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
