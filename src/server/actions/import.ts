@@ -1,8 +1,11 @@
 "use server";
 import { z } from "zod";
+import { revalidatePath } from "next/cache";
 import { computeCycleForDate } from "@/lib/cycle/compute";
+import { ensureCycleForDate } from "@/lib/db/ensure-cycle";
 import { getServerSupabase } from "@/lib/db/server";
 import { fingerprint } from "@/lib/import/fingerprint";
+import { foldName } from "@/lib/import/normalize";
 
 const WalletRowSchema = z.object({
   category: z.string().min(1),
@@ -147,4 +150,113 @@ export async function prepareImportAction(rawRows: unknown): Promise<Prepared | 
     categoriesByCycle,
     counts: { kept: preparedRows.length, duplicates: preparedRows.filter((r) => r.isDuplicate).length },
   };
+}
+
+const CommitRowSchema = z.object({
+  occurredOn: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  amount: z.number().nonnegative(),
+  note: z.string().nullable(),
+  walletCategory: z.string().min(1),
+  appCategoryName: z.string().min(1),
+});
+
+const CommitPayloadSchema = z.object({
+  rows: z.array(CommitRowSchema).min(1),
+  pendingMappings: z.array(z.object({ walletCategory: z.string().min(1), appCategoryName: z.string().min(1) })),
+});
+
+export type CommitResult = { importId: string; count: number } | { error: string };
+
+export async function commitImportAction(rawPayload: unknown): Promise<CommitResult> {
+  const parsed = CommitPayloadSchema.safeParse(rawPayload);
+  if (!parsed.success) return { error: "Dati non validi." };
+
+  const supabase = await getServerSupabase();
+  const importId = crypto.randomUUID();
+
+  // 1. resolve cycleId for every row (lazy-creates onboarding cycles)
+  const cycleByDate = new Map<string, string>();
+  for (const row of parsed.data.rows) {
+    if (!cycleByDate.has(row.occurredOn)) {
+      try {
+        cycleByDate.set(row.occurredOn, await ensureCycleForDate(row.occurredOn));
+      } catch (e) {
+        return { error: e instanceof Error ? e.message : "Errore ciclo." };
+      }
+    }
+  }
+
+  // 2. fetch all categories for the resolved cycles (one query)
+  const cycleIds = Array.from(new Set(cycleByDate.values()));
+  const { data: cats, error: catErr } = await supabase
+    .from("categories")
+    .select("id, name, cycle_id")
+    .in("cycle_id", cycleIds);
+  if (catErr) return { error: catErr.message };
+  const categoryIdByCycleAndFolded = new Map<string, string>(); // key: `${cycleId}|${foldName(name)}`
+  for (const c of cats ?? []) {
+    categoryIdByCycleAndFolded.set(`${c.cycle_id}|${foldName(c.name)}`, c.id);
+  }
+
+  // 3. resolve categoryId per row, abort on first miss
+  type InsertRow = {
+    cycle_id: string;
+    category_id: string;
+    amount: number;
+    occurred_on: string;
+    note: string | null;
+    fingerprint: string;
+    import_id: string;
+  };
+  const inserts: InsertRow[] = [];
+  for (const row of parsed.data.rows) {
+    const cycleId = cycleByDate.get(row.occurredOn)!;
+    const key = `${cycleId}|${foldName(row.appCategoryName)}`;
+    const categoryId = categoryIdByCycleAndFolded.get(key);
+    if (!categoryId) {
+      // find the cycle range for the error message
+      const { data: cycleRow } = await supabase
+        .from("cycles")
+        .select("start_date, end_date")
+        .eq("id", cycleId)
+        .single();
+      const cycleLabel = cycleRow ? `${cycleRow.start_date} – ${cycleRow.end_date}` : cycleId;
+      return { error: `Categoria "${row.appCategoryName}" non esiste nel ciclo ${cycleLabel}.` };
+    }
+    const fp = await fingerprint({
+      occurredOn: row.occurredOn, amount: row.amount, note: row.note,
+    });
+    inserts.push({
+      cycle_id: cycleId,
+      category_id: categoryId,
+      amount: row.amount,
+      occurred_on: row.occurredOn,
+      note: row.note,
+      fingerprint: fp,
+      import_id: importId,
+    });
+  }
+
+  // 4. bulk insert
+  const { error: insErr } = await supabase.from("expenses").insert(inserts);
+  if (insErr) return { error: insErr.message };
+
+  // 5. upsert pending mappings (resolve user_id from session)
+  if (parsed.data.pendingMappings.length > 0) {
+    const { data: profile } = await supabase.from("profiles").select("id").single();
+    if (!profile) return { error: "Profilo mancante." };
+    const upsertRows = parsed.data.pendingMappings.map((m) => ({
+      user_id: profile.id,
+      wallet_category: m.walletCategory,
+      app_category_name: m.appCategoryName,
+      updated_at: new Date().toISOString(),
+    }));
+    const { error: mapErr } = await supabase
+      .from("import_mappings")
+      .upsert(upsertRows, { onConflict: "user_id,wallet_category" });
+    if (mapErr) return { error: mapErr.message };
+  }
+
+  revalidatePath("/");
+  return { importId, count: inserts.length };
 }
