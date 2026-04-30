@@ -6,10 +6,10 @@ export const metadata = { title: copy.import.title };
 
 export default function ImportPage() {
   return (
-    <main className="min-h-dvh bg-background pb-24">
-      <header className="flex items-center gap-2 px-4 pt-4 pb-4">
+    <main className="mx-auto min-h-dvh w-full max-w-md space-y-6 p-4 pb-24 sm:max-w-lg sm:p-6">
+      <header className="flex items-center gap-2">
         <BackLink label={copy.header.back} />
-        <h1 className="font-display text-3xl text-clay-900">{copy.import.title}</h1>
+        <h1 className="font-display text-2xl text-text-primary">{copy.import.title}</h1>
       </header>
       <StagingHost />
     </main>
