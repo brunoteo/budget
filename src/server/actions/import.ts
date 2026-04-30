@@ -260,3 +260,20 @@ export async function commitImportAction(rawPayload: unknown): Promise<CommitRes
   revalidatePath("/");
   return { importId, count: inserts.length };
 }
+
+const UndoSchema = z.object({ importId: z.string().uuid() });
+
+export type UndoResult = { deleted: number } | { error: string };
+
+export async function undoImportAction(rawPayload: unknown): Promise<UndoResult> {
+  const parsed = UndoSchema.safeParse(rawPayload);
+  if (!parsed.success) return { error: "Dati non validi." };
+  const supabase = await getServerSupabase();
+  const { error, count } = await supabase
+    .from("expenses")
+    .delete({ count: "exact" })
+    .eq("import_id", parsed.data.importId);
+  if (error) return { error: error.message };
+  revalidatePath("/");
+  return { deleted: count ?? 0 };
+}
