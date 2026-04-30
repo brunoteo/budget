@@ -9,12 +9,21 @@ import { copy } from "@/lib/copy";
 import { Staging } from "./staging";
 import { Success } from "./success";
 
+export type CategoryRecap = { appCategoryName: string; count: number; total: number };
+
 type Phase =
   | { kind: "idle" }
   | { kind: "parsing" }
   | { kind: "error"; message: string }
   | { kind: "ready"; prepared: Prepared; excluded: number }
-  | { kind: "done"; importId: string; count: number; range: { start: string; end: string } };
+  | {
+      kind: "done";
+      importId: string;
+      count: number;
+      range: { start: string; end: string };
+      total: number;
+      recap: CategoryRecap[];
+    };
 
 export function StagingHost() {
   const [phase, setPhase] = useState<Phase>({ kind: "idle" });
@@ -42,12 +51,22 @@ export function StagingHost() {
       <Staging
         prepared={phase.prepared}
         excludedCount={phase.excluded}
-        onCommitted={(importId, count, range) => setPhase({ kind: "done", importId, count, range })}
+        onCommitted={(importId, count, range, total, recap) =>
+          setPhase({ kind: "done", importId, count, range, total, recap })
+        }
       />
     );
   }
   if (phase.kind === "done") {
-    return <Success importId={phase.importId} count={phase.count} range={phase.range} />;
+    return (
+      <Success
+        importId={phase.importId}
+        count={phase.count}
+        range={phase.range}
+        total={phase.total}
+        recap={phase.recap}
+      />
+    );
   }
 
   return (
