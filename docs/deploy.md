@@ -53,12 +53,23 @@ pnpm exec supabase db push
 ## 4. Smoke-test production
 
 1. Open the production URL — you should land on `/login`.
-2. Sign in with one of the production accounts (signup is disabled in production — see §1 step 3 and §3 step 3; account creation is a manual operation in Supabase Studio, see §6). Confirm the redirect to `/`.
+2. Sign in with one of the production accounts (signup is disabled in production — see §1 step 3 and §3 step 3; account creation is a manual operation in Supabase Studio, see §7). Confirm the redirect to `/`.
 3. Add a category, then an expense. Confirm the dashboard shows the KPI cards and the category list with the expense.
 4. Sign out and sign in again with the same credentials.
 5. Repeat for the second account from a fresh browser/incognito session.
 
-## 5. Day-2 operations
+## 5. Installing the PWA on Android
+
+After the first deploy that includes the manifest:
+
+1. Open the production URL in **Chrome on Android**.
+2. Tap the address bar's "**Installa**" badge if Chrome surfaces one, OR open the triple-dot menu → **Installa l'app**.
+3. The app appears on the home screen with the "Budget" name and the terracotta "B" icon.
+4. Launching the icon opens the app in standalone mode (no Chrome chrome).
+
+Repeat for both spouses. iOS is not supported in this version.
+
+## 6. Day-2 operations
 
 - **New migrations:** add a file under `supabase/migrations/`, commit, then run `pnpm exec supabase db push` from a machine linked to the project.
 - **Regenerating types after schema change:** locally, run `pnpm db:reset && pnpm db:types`, commit the regenerated `src/types/database.ts`.
@@ -71,7 +82,7 @@ pnpm exec supabase db push
 - **`db push` complains about a migration mismatch:** the local migrations diverged from what's on the hosted DB. Inspect with `pnpm exec supabase db diff` and resolve manually.
 - **RLS blocking unexpected queries:** check that the user is logged in (cookies present). Server queries get the user's auth context via `cookies()`. Service-role bypasses RLS — never use it from app code.
 
-## 6. Recovering an account
+## 7. Recovering an account
 
 If either user forgets their password:
 
@@ -81,6 +92,6 @@ If either user forgets their password:
 
 If the user's email itself has changed: edit it in the same Users panel, then send recovery to the new address.
 
-## 7. Backups
+## 8. Backups
 
 Supabase free tier ships with 1-day point-in-time recovery, automatic. If/when our data starts mattering, upgrade to **Pro** (US$25/mo per project) for 7-day PITR. No app-side backup runbook for now — the database is the source of truth and Supabase manages the snapshot.
