@@ -1,7 +1,7 @@
 "use server";
 import { z } from "zod";
 import { getServerSupabase } from "@/lib/db/server";
-import { computeCycleForDate } from "@/lib/cycle/compute";
+import { ensureCycleForDate } from "@/lib/db/ensure-cycle";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
@@ -11,27 +11,6 @@ const ExpenseSchema = z.object({
   occurredOn: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   note: z.string().max(500).optional().nullable(),
 });
-
-async function ensureCycleForDate(occurredOn: string) {
-  const supabase = await getServerSupabase();
-  const { data: profile } = await supabase.from("profiles").select("id, cycle_start_day, default_salary").single();
-  if (!profile) throw new Error("No profile");
-  const range = computeCycleForDate(occurredOn, profile.cycle_start_day);
-  const { data: existing } = await supabase
-    .from("cycles")
-    .select("id")
-    .eq("user_id", profile.id)
-    .eq("start_date", range.start)
-    .maybeSingle();
-  if (existing) return existing.id;
-  const { data: created, error } = await supabase
-    .from("cycles")
-    .insert({ user_id: profile.id, start_date: range.start, end_date: range.end, salary: profile.default_salary })
-    .select("id")
-    .single();
-  if (error || !created) throw error ?? new Error("cycle insert failed");
-  return created.id;
-}
 
 export async function createExpenseAction(formData: FormData) {
   const parsed = ExpenseSchema.safeParse(Object.fromEntries(formData));
