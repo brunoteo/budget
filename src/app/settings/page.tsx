@@ -14,10 +14,10 @@ export default async function SettingsPage() {
   const c = copy.settings;
 
   return (
-    <main className="mx-auto max-w-md space-y-6 p-4">
+    <main className="mx-auto w-full max-w-md space-y-6 p-4 sm:max-w-lg sm:p-6">
       <div className="flex items-center gap-2">
         <BackLink label={copy.header.back} />
-        <h1 className="font-display text-xl font-semibold text-clay-900">{c.title}</h1>
+        <h1 className="font-display text-2xl text-text-primary">{c.title}</h1>
       </div>
 
       <ProfileForm defaults={data.profile} />
@@ -25,10 +25,10 @@ export default async function SettingsPage() {
 
       <Link
         href="/settings/mappings"
-        className="flex h-12 w-full items-center justify-between rounded-xl border border-clay-200 bg-clay-50 px-3 font-sans text-clay-900 shadow-sm"
+        className="flex h-12 w-full items-center justify-between rounded-lg border border-border bg-surface px-4 text-text-primary shadow-sm transition-colors hover:bg-clay-200"
       >
         <span>{copy.mappings.settingsLink}</span>
-        <span aria-hidden className="text-clay-400">›</span>
+        <span aria-hidden className="text-text-muted">›</span>
       </Link>
     </main>
   );

@@ -6,6 +6,8 @@ import {
 } from "@/components/ui/drawer";
 import { copy } from "@/lib/copy";
 import { updateMappingAction, deleteMappingAction } from "@/server/actions/import";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 type Props = {
   children: ReactNode;
@@ -36,41 +38,46 @@ export function EditDrawer({ children, initial }: Props) {
       <DrawerTrigger asChild>{children}</DrawerTrigger>
       <DrawerContent>
         <DrawerHeader>
-          <DrawerTitle className="font-display text-base text-clay-700">{copy.mappings.title}</DrawerTitle>
+          <DrawerTitle className="font-display text-lg text-text-primary">
+            {copy.mappings.title}
+          </DrawerTitle>
         </DrawerHeader>
-        <div className="px-6 pb-8 space-y-4">
-          <div>
-            <p className="font-sans text-xs uppercase tracking-wider text-clay-600">{copy.mappings.walletLabel}</p>
-            <p className="font-sans text-base text-clay-900">{initial.walletCategory}</p>
+        <div className="space-y-5 px-6 pb-8">
+          <div className="space-y-1">
+            <p className="text-xs uppercase tracking-wider text-text-muted">{copy.mappings.walletLabel}</p>
+            <p className="text-base text-text-primary">{initial.walletCategory}</p>
           </div>
-          <div>
-            <label className="font-sans text-xs uppercase tracking-wider text-clay-600">{copy.mappings.appLabel}</label>
-            <input
+          <div className="space-y-2">
+            <label htmlFor="mapping-app-name" className="block text-xs uppercase tracking-wider text-text-muted">
+              {copy.mappings.appLabel}
+            </label>
+            <Input
+              id="mapping-app-name"
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="mt-1 h-12 w-full rounded-md border border-border bg-surface px-3 font-sans text-base text-clay-900"
               maxLength={80}
             />
           </div>
-          {error && <p className="font-sans text-sm text-sienna-600">{error}</p>}
+          {error && <p className="text-sm text-destructive" aria-live="polite">{error}</p>}
           <div className="flex flex-col gap-3 pt-2">
-            <button
+            <Button
               type="button"
+              size="lg"
               disabled={pending || name.trim().length === 0}
               onClick={handleSave}
-              className="h-12 rounded-md bg-terra-500 px-6 font-sans text-base text-white disabled:opacity-60"
             >
               {copy.mappings.save}
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
+              variant="destructive"
+              size="lg"
               disabled={pending}
               onClick={handleDelete}
-              className="h-12 rounded-md border border-sienna-500 px-6 font-sans text-base text-sienna-500 disabled:opacity-60"
             >
               {copy.mappings.delete}
-            </button>
+            </Button>
           </div>
         </div>
       </DrawerContent>

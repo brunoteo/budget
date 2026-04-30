@@ -37,37 +37,36 @@ export function Row({ state, onToggleInclude, onPickCategory, onCreateCategory }
         onToggleInclude();
       }}
       className={[
-        "relative grid grid-cols-[1fr_auto] gap-x-4 gap-y-1 px-6 py-3 border-b border-border-muted",
-        "min-h-[96px] cursor-pointer",
-        state.isDuplicate ? "bg-clay-200" : "bg-background",
-        state.isUnmapped ? "border-l-2 border-l-terra-500" : "",
+        "relative grid grid-cols-[1fr_auto] gap-x-4 gap-y-1 px-4 py-3",
+        "min-h-[96px] cursor-pointer border-b border-border-muted last:border-b-0 transition-colors",
+        state.isDuplicate ? "bg-clay-50" : "bg-surface hover:bg-clay-50",
+        state.isUnmapped ? "border-l-2 border-l-accent" : "",
       ].join(" ")}
     >
-      <span className="font-mono text-sm text-clay-700">{state.occurredOnDisplay}</span>
+      <span className="font-mono text-sm text-text-muted">{state.occurredOnDisplay}</span>
       <span
         className={[
-          "font-mono text-base font-medium tabular-nums text-clay-900 text-right",
-          state.isDuplicate ? "line-through text-clay-500" : "",
+          "text-right font-mono text-base font-medium tabular-nums text-text-primary",
+          state.isDuplicate ? "text-text-muted line-through" : "",
         ].join(" ")}
       >
         {formatEur(state.amount)}
       </span>
 
-      <div className="col-span-2 flex flex-wrap items-center gap-x-2 text-xs uppercase tracking-wide text-clay-600 font-sans">
+      <div className="col-span-2 flex flex-wrap items-center gap-x-2 text-xs uppercase tracking-wide text-text-muted">
         <span>{state.walletCategory}</span>
-        {state.isDuplicate && <span className="text-clay-500">· {copy.import.duplicatedTag}</span>}
+        {state.isDuplicate && <span>· {copy.import.duplicatedTag}</span>}
       </div>
 
       <div className="col-span-2" data-no-toggle>
-        <span className="mr-2 font-sans text-sm text-clay-400">→</span>
+        <span className="mr-2 text-sm text-text-muted">→</span>
         <CategoryDrawer
           trigger={
             <button
               type="button"
               className={[
-                "h-11 min-w-[12rem] rounded-md border border-border bg-surface px-3 text-left",
-                "font-sans text-sm",
-                state.isUnmapped ? "text-terra-500" : "text-clay-900",
+                "h-11 min-w-[12rem] rounded-md border border-border bg-surface px-3 text-left text-sm",
+                state.isUnmapped ? "text-accent" : "text-text-primary",
               ].join(" ")}
             >
               {state.appCategoryName ?? copy.import.unmappedPlaceholder}
@@ -80,14 +79,14 @@ export function Row({ state, onToggleInclude, onPickCategory, onCreateCategory }
         />
       </div>
 
-      <p className="col-span-1 line-clamp-2 font-sans italic text-sm text-clay-700">
+      <p className="col-span-1 line-clamp-2 text-sm italic text-text-muted">
         {state.note ?? ""}
       </p>
       <span
         aria-hidden
         className={[
-          "h-6 w-6 self-center justify-self-end border-2 rounded-sm",
-          state.included ? "bg-terra-500 border-terra-500" : "border-clay-400",
+          "h-6 w-6 self-center justify-self-end rounded-sm border-2",
+          state.included ? "border-accent bg-accent" : "border-border",
         ].join(" ")}
       />
     </article>

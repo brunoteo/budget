@@ -8,28 +8,28 @@ export const metadata = { title: copy.mappings.title };
 export default async function MappingsPage() {
   const mappings = await getMappings();
   return (
-    <main className="min-h-dvh bg-background pb-12">
-      <header className="flex items-center gap-2 px-4 pt-4 pb-4">
+    <main className="mx-auto w-full max-w-md space-y-6 p-4 pb-12 sm:max-w-lg sm:p-6">
+      <header className="flex items-center gap-2">
         <BackLink href="/settings" label={copy.header.back} />
-        <h1 className="font-display text-3xl text-clay-900">{copy.mappings.title}</h1>
+        <h1 className="font-display text-2xl text-text-primary">{copy.mappings.title}</h1>
       </header>
       {mappings.length === 0 ? (
-        <p className="px-6 mt-12 text-center font-display italic text-base text-clay-500">
-          {copy.mappings.empty}
-        </p>
+        <div className="rounded-lg border border-dashed border-border bg-surface p-8 text-center">
+          <p className="text-sm text-text-muted">{copy.mappings.empty}</p>
+        </div>
       ) : (
-        <ul>
+        <ul className="divide-y divide-border-muted overflow-hidden rounded-lg border border-border bg-surface shadow-sm">
           {mappings.map((m) => (
             <li key={m.walletCategory}>
               <EditDrawer initial={m}>
                 <button
                   type="button"
-                  className="flex h-12 w-full items-center gap-2 px-6 text-left border-b border-border-muted"
+                  className="flex min-h-[56px] w-full items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-clay-50"
                 >
-                  <span className="flex-1 truncate font-sans text-sm text-clay-700">{m.walletCategory}</span>
-                  <span aria-hidden className="font-sans text-sm text-clay-400">→</span>
-                  <span className="flex-1 truncate font-sans text-sm text-clay-900">{m.appCategoryName}</span>
-                  <span aria-hidden className="font-sans text-sm text-clay-400">›</span>
+                  <span className="flex-1 truncate text-sm text-text-muted">{m.walletCategory}</span>
+                  <span aria-hidden className="text-sm text-text-muted">→</span>
+                  <span className="flex-1 truncate text-sm font-medium text-text-primary">{m.appCategoryName}</span>
+                  <span aria-hidden className="text-sm text-text-muted">›</span>
                 </button>
               </EditDrawer>
             </li>
