@@ -116,4 +116,12 @@ export const copy = {
     delete: "Elimina",
     settingsLink: "Mappature Wallet",
   },
+  toast: {
+    expenseAdded: "Spesa aggiunta",
+    expenseDeleted: "Spesa rimossa",
+    categorySaved: "Categoria aggiornata",
+    categoryDeleted: "Categoria rimossa",
+    settingsSaved: "Impostazioni salvate",
+    unexpectedError: "Si è verificato un errore. Riprova.",
+  },
 } as const;
