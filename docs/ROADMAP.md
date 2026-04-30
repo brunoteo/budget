@@ -5,8 +5,8 @@ The app ships in three numbered plans. Each plan is a self-contained slice that 
 | Plan | Status | Theme | Plan file |
 |------|--------|-------|-----------|
 | 1 | ✅ Shipped | MVP — manual entry, dashboard, KPIs | [`2026-04-28-budget-mvp.md`](superpowers/plans/2026-04-28-budget-mvp.md) |
-| 2 | 🔜 Next | Wallet CSV import flow | _to be written_ |
-| 3 | 🗓 Later | PWA + production hardening | _to be written_ |
+| 2 | ✅ Shipped | Wallet CSV import flow | [`2026-04-29-wallet-csv-import.md`](superpowers/plans/2026-04-29-wallet-csv-import.md) |
+| 3 | 🔜 Next | PWA shell + production hardening (slim) — design: [`2026-04-30-budget-pwa-hardening-design.md`](superpowers/specs/2026-04-30-budget-pwa-hardening-design.md) | _to be written_ |
 
 ---
 
