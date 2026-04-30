@@ -31,7 +31,7 @@ export default function RootLayout({
       lang="it"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-clay-50 text-clay-900">
+      <body className="min-h-full flex flex-col bg-clay-50 text-clay-900 safe-area">
         {children}
         <Suspense fallback={null}>
           <ToastFromQuery />
