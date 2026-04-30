@@ -1,15 +1,13 @@
-import { describe, it, expect, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { buildCsp } from "@/lib/auth/csp";
 
 describe("buildCsp", () => {
-  const originalNodeEnv = process.env.NODE_ENV;
-
   beforeEach(() => {
     delete process.env.NEXT_PUBLIC_SUPABASE_URL;
   });
 
   afterEach(() => {
-    process.env.NODE_ENV = originalNodeEnv;
+    vi.unstubAllEnvs();
   });
 
   it("includes the nonce in script-src and style-src", () => {
@@ -38,9 +36,9 @@ describe("buildCsp", () => {
   });
 
   it("emits upgrade-insecure-requests in production only", () => {
-    process.env.NODE_ENV = "production";
+    vi.stubEnv("NODE_ENV", "production");
     expect(buildCsp("n")).toContain("upgrade-insecure-requests");
-    process.env.NODE_ENV = "development";
+    vi.stubEnv("NODE_ENV", "development");
     expect(buildCsp("n")).not.toContain("upgrade-insecure-requests");
   });
 });
