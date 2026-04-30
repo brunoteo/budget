@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { Upload } from "lucide-react";
 import { copy } from "@/lib/copy";
 
 type Props = {
@@ -42,17 +43,22 @@ export function Dropzone({ onFile, onParseError, parsing }: Props) {
         if (file) void handleFile(file);
       }}
       className={[
-        "relative flex min-h-[240px] cursor-pointer flex-col items-center justify-center",
-        "bg-surface border-t border-clay-300 px-6 py-10",
+        "relative flex min-h-[220px] cursor-pointer flex-col items-center justify-center gap-2 text-center",
+        "rounded-lg border border-dashed bg-surface px-6 py-10 shadow-sm",
         "transition-colors duration-150",
-        dragOver ? "bg-clay-200" : "",
+        dragOver
+          ? "border-accent bg-clay-200"
+          : "border-border hover:border-accent/60 hover:bg-clay-50",
       ].join(" ")}
-      style={{ borderLeftWidth: dragOver ? 3 : 2, borderLeftStyle: "solid" }}
     >
-      <span aria-hidden className="absolute left-0 top-0 bottom-0" style={{ width: dragOver ? 3 : 2, background: "var(--color-terra-500)" }} />
-      <h2 className="font-display text-2xl text-clay-800">{copy.import.drop}</h2>
-      <p className="mt-2 font-sans text-sm text-clay-500">{copy.import.dropHint}</p>
-      {parsing && <p className="mt-4 font-sans text-sm text-clay-600">{copy.import.parsing}</p>}
+      <Upload
+        className={`h-7 w-7 ${dragOver ? "text-accent" : "text-text-muted"}`}
+        strokeWidth={1.5}
+        aria-hidden
+      />
+      <h2 className="font-display text-xl text-text-primary">{copy.import.drop}</h2>
+      <p className="text-sm text-text-muted">{copy.import.dropHint}</p>
+      {parsing && <p className="mt-2 text-sm text-text-muted">{copy.import.parsing}</p>}
       <input
         ref={inputRef}
         type="file"

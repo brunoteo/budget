@@ -173,8 +173,8 @@ export function Staging({ prepared, excludedCount, onCommitted }: Props) {
   }
 
   return (
-    <div className="pb-20">
-      <p className="px-6 pt-2 font-display italic text-lg text-clay-700">
+    <div className="space-y-3 pb-24">
+      <p className="text-sm text-text-muted">
         {copy.import.subtitle(prepared.rows.length, formatRangeShort(minDate, maxDate))}
       </p>
       <SummaryHeader
@@ -182,25 +182,27 @@ export function Staging({ prepared, excludedCount, onCommitted }: Props) {
         duplicates={prepared.counts.duplicates}
         excluded={excludedCount}
       />
-      {grouped.map((g, gi) => (
-        <section key={g.startDate}>
-          {grouped.length > 1 && gi > 0 && (
-            <h2 className="border-b border-clay-300 px-6 py-3 font-display italic text-base text-clay-700">
-              {copy.import.cyclePrev(formatRangeShort(g.startDate, g.endDate))}
-            </h2>
-          )}
-          {g.indices.map((i) => (
-            <Row
-              key={i}
-              state={rowStates[i]!}
-              onToggleInclude={() => toggleInclude(i)}
-              onPickCategory={(name) => pickCategory(i, name)}
-              onCreateCategory={(name) => handleCreateCategory(i, name)}
-            />
-          ))}
-        </section>
-      ))}
-      {error && <p className="mx-6 mt-4 font-sans text-sm text-sienna-600">{error}</p>}
+      <div className="overflow-hidden rounded-lg border border-border bg-surface shadow-sm">
+        {grouped.map((g, gi) => (
+          <section key={g.startDate}>
+            {grouped.length > 1 && gi > 0 && (
+              <h2 className="border-y border-border-muted bg-clay-50 px-4 py-2 font-display text-sm text-text-muted">
+                {copy.import.cyclePrev(formatRangeShort(g.startDate, g.endDate))}
+              </h2>
+            )}
+            {g.indices.map((i) => (
+              <Row
+                key={i}
+                state={rowStates[i]!}
+                onToggleInclude={() => toggleInclude(i)}
+                onPickCategory={(name) => pickCategory(i, name)}
+                onCreateCategory={(name) => handleCreateCategory(i, name)}
+              />
+            ))}
+          </section>
+        ))}
+      </div>
+      {error && <p className="text-sm text-destructive" aria-live="polite">{error}</p>}
       <CommitFooter
         unmappedCount={unmappedIncluded}
         includedCount={includedRows.length}

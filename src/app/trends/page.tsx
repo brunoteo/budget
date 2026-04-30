@@ -8,15 +8,19 @@ export const dynamic = "force-dynamic";
 export default async function TrendsPage() {
   const data = await getTrendCycles(6);
   return (
-    <main className="mx-auto max-w-3xl p-4">
-      <div className="mb-4 flex items-center gap-2">
+    <main className="mx-auto w-full max-w-3xl space-y-6 p-4 sm:p-6">
+      <div className="flex items-center gap-2">
         <BackLink label={copy.header.back} />
-        <h1 className="font-display text-xl font-semibold text-clay-900">{copy.trends.title}</h1>
+        <h1 className="font-display text-2xl text-text-primary">{copy.trends.title}</h1>
       </div>
       {data.length === 0 ? (
-        <p className="text-clay-600">{copy.trends.needMoreData}</p>
+        <div className="rounded-lg border border-dashed border-border bg-surface p-8 text-center">
+          <p className="text-sm text-text-muted">{copy.trends.needMoreData}</p>
+        </div>
       ) : (
-        <TrendsChart data={data} />
+        <div className="rounded-lg border border-border bg-surface p-4 shadow-sm">
+          <TrendsChart data={data} />
+        </div>
       )}
     </main>
   );

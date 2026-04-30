@@ -77,7 +77,7 @@ export function StagingHost() {
         parsing={phase.kind === "parsing"}
       />
       {phase.kind === "error" && (
-        <p className="mx-6 mt-4 font-sans text-sm text-sienna-600">{phase.message}</p>
+        <p className="mt-3 text-sm text-destructive" aria-live="polite">{phase.message}</p>
       )}
     </div>
   );
