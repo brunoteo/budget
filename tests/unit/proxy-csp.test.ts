@@ -1,9 +1,15 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import { buildCsp } from "@/lib/auth/csp";
 
 describe("buildCsp", () => {
+  const originalNodeEnv = process.env.NODE_ENV;
+
   beforeEach(() => {
     delete process.env.NEXT_PUBLIC_SUPABASE_URL;
+  });
+
+  afterEach(() => {
+    process.env.NODE_ENV = originalNodeEnv;
   });
 
   it("includes the nonce in script-src and style-src", () => {
@@ -29,5 +35,12 @@ describe("buildCsp", () => {
   it("allows inline-style attributes for Recharts", () => {
     const csp = buildCsp("n");
     expect(csp).toContain("style-src-attr 'unsafe-inline'");
+  });
+
+  it("emits upgrade-insecure-requests in production only", () => {
+    process.env.NODE_ENV = "production";
+    expect(buildCsp("n")).toContain("upgrade-insecure-requests");
+    process.env.NODE_ENV = "development";
+    expect(buildCsp("n")).not.toContain("upgrade-insecure-requests");
   });
 });
