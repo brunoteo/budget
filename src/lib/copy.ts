@@ -1,5 +1,5 @@
 export const copy = {
-  app: { title: "Budget", description: "Budget mensile per coppia" },
+  app: { title: "Budget", description: "Budget mensile per coppia", shortName: "Budget" },
   auth: {
     loginTitle: "Accedi",
     signupTitle: "Crea account",
@@ -15,6 +15,10 @@ export const copy = {
     goLogin: "Accedi",
     goSignup: "Registrati",
     errorGeneric: "Si è verificato un errore. Riprova.",
+    signupDisabled: "Registrazione disabilitata.",
+    loginFailed: "Email o password errata.",
+    submittingLogin: "Accesso…",
+    submittingSignup: "Creazione…",
   },
   header: { settings: "Impostazioni", logout: "Esci", cycle: "Ciclo", categories: "Categorie", back: "Indietro" },
   fab: { addExpense: "Aggiungi spesa" },
@@ -114,5 +118,21 @@ export const copy = {
     save: "Salva",
     delete: "Elimina",
     settingsLink: "Mappature Wallet",
+  },
+  toast: {
+    expenseAdded: "Spesa aggiunta",
+    expenseDeleted: "Spesa rimossa",
+    categorySaved: "Categoria aggiornata",
+    categoryDeleted: "Categoria rimossa",
+    settingsSaved: "Impostazioni salvate",
+    unexpectedError: "Si è verificato un errore. Riprova.",
+  },
+  errors: {
+    invalidInput: "Dati non validi.",
+    categoryHasExpenses: "Impossibile eliminare: la categoria ha spese.",
+    cycleNotFound: "Ciclo non trovato.",
+    noPreviousCycle: "Nessun ciclo precedente.",
+    previousCycleEmpty: "Il ciclo precedente non ha categorie.",
+    profileNotFound: "Profilo non trovato.",
   },
 } as const;

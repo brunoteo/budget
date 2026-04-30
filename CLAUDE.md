@@ -28,6 +28,7 @@ src/
   lib/
     db/                   # Supabase client factories (server.ts, client.ts) — all DB access
       ensure-cycle.ts     # Lazy-create user's cycle for a date (shared by expense + import)
+    auth/                 # PURE: auth helpers (e.g., signup-gating path matcher)
     cycle/                # PURE: cycle date math (no Next, no Supabase)
     import/               # PURE: CSV parse, filter, fingerprint, name-fold for Wallet import
     kpi/                  # PURE: KPI computation
@@ -73,7 +74,7 @@ Always run `pnpm typecheck && pnpm lint && pnpm test` before claiming a task com
 - **Design tokens.** All colors, typography, spacing, radii, shadows, and motion come from `DESIGN.md` (and from the Tailwind v4 `@theme` block + CSS variables in `src/app/globals.css`). Never hard-code hex values, font sizes, or one-off paddings in components — extend the theme instead.
 - **Italian only.** All UI strings live in `src/lib/copy.ts`. Don't hard-code Italian elsewhere. No i18n library — single locale.
 - **Currency** formatted via `lib/format/eur.ts` (`€ 1.234,56`). **Dates** via `lib/format/date.ts` (`DD/MM/YYYY`). Never format inline.
-- **Pure libraries** under `lib/{cycle,kpi,format}` import nothing from `next`, `react`, or `@supabase/*`. They are unit-tested in isolation.
+- **Pure libraries** under `lib/{auth,cycle,kpi,format}` import nothing from `next`, `react`, or `@supabase/*`. They are unit-tested in isolation.
 - **All mutations** go through Server Actions in `src/server/actions/`, validated with Zod. No `@supabase/*` write calls from client components.
 - **All reads** from Server Components go through `src/server/queries/`.
 - **Every new table or column** comes with an RLS policy in the same migration. Never bypass RLS with the service-role key from app code.
@@ -99,6 +100,7 @@ Always run `pnpm typecheck && pnpm lint && pnpm test` before claiming a task com
 - For any DB change: `pnpm db:reset && pnpm test` must be green.
 - `pnpm typecheck && pnpm lint && pnpm test` must all pass.
 - E2E tests must pass before merging UI changes.
+- After running the suite, run `pnpm audit --prod` and confirm zero `high`/`critical` advisories. Resolve any new ones in the same PR.
 
 ## What NOT to do
 

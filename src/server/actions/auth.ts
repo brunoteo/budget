@@ -1,7 +1,9 @@
 "use server";
 import { z } from "zod";
-import { getServerSupabase } from "@/lib/db/server";
 import { redirect } from "next/navigation";
+import { getServerSupabase } from "@/lib/db/server";
+import { copy } from "@/lib/copy";
+import { fromZod, type ActionResult } from "./result";
 
 const SignupSchema = z.object({
   email: z.string().email(),
@@ -15,30 +17,54 @@ const LoginSchema = z.object({
   password: z.string().min(8),
 });
 
-export async function signupAction(formData: FormData) {
+type SignupFields = "email" | "password" | "displayName" | "cycleStartDay";
+type LoginFields = "email" | "password";
+
+export async function signupAction(
+  _prev: ActionResult<SignupFields>,
+  formData: FormData,
+): Promise<ActionResult<SignupFields>> {
+  if (process.env.NEXT_PUBLIC_ALLOW_SIGNUP !== "true") {
+    return { ok: false, fieldErrors: {}, formError: copy.auth.signupDisabled };
+  }
   const parsed = SignupSchema.safeParse(Object.fromEntries(formData));
-  if (!parsed.success) return { error: "Dati non validi." };
+  if (!parsed.success) return fromZod<SignupFields>(parsed.error);
+
   const { email, password, displayName, cycleStartDay } = parsed.data;
   const supabase = await getServerSupabase();
-  const { data, error } = await supabase.auth.signUp({
-    email,
-    password,
-    options: { data: { display_name: displayName } },
-  });
-  if (error || !data.user) return { error: error?.message ?? "Errore" };
-  await supabase
-    .from("profiles")
-    .update({ display_name: displayName, cycle_start_day: cycleStartDay })
-    .eq("id", data.user.id);
+  try {
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: { data: { display_name: displayName } },
+    });
+    if (error || !data.user) {
+      return { ok: false, fieldErrors: {}, formError: error?.message ?? copy.toast.unexpectedError };
+    }
+    await supabase
+      .from("profiles")
+      .update({ display_name: displayName, cycle_start_day: cycleStartDay })
+      .eq("id", data.user.id);
+  } catch {
+    return { ok: false, fieldErrors: {}, formError: copy.toast.unexpectedError };
+  }
   redirect("/");
 }
 
-export async function loginAction(formData: FormData) {
+export async function loginAction(
+  _prev: ActionResult<LoginFields>,
+  formData: FormData,
+): Promise<ActionResult<LoginFields>> {
   const parsed = LoginSchema.safeParse(Object.fromEntries(formData));
-  if (!parsed.success) return { error: "Dati non validi." };
+  if (!parsed.success) return fromZod<LoginFields>(parsed.error);
+
   const supabase = await getServerSupabase();
-  const { error } = await supabase.auth.signInWithPassword(parsed.data);
-  if (error) return { error: error.message };
+  try {
+    const { error } = await supabase.auth.signInWithPassword(parsed.data);
+    if (error) return { ok: false, fieldErrors: {}, formError: copy.auth.loginFailed };
+  } catch {
+    return { ok: false, fieldErrors: {}, formError: copy.toast.unexpectedError };
+  }
   redirect("/");
 }
 

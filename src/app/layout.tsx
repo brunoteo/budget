@@ -1,7 +1,11 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Suspense } from "react";
 import "./globals.css";
 import { copy } from "@/lib/copy";
+import { Toaster } from "@/components/ui/sonner";
+import { ToastFromQuery } from "@/components/toast-from-query";
+import { SWRegister } from "@/components/sw-register";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -13,9 +17,18 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+export const viewport: Viewport = {
+  themeColor: "#bb5a3c",
+  colorScheme: "light",
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+};
+
 export const metadata: Metadata = {
   title: copy.app.title,
   description: copy.app.description,
+  formatDetection: { telephone: false, email: false, address: false },
 };
 
 export default function RootLayout({
@@ -28,7 +41,14 @@ export default function RootLayout({
       lang="it"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-clay-50 text-clay-900">{children}</body>
+      <body className="min-h-full flex flex-col bg-clay-50 text-clay-900 safe-area">
+        {children}
+        <Suspense fallback={null}>
+          <ToastFromQuery />
+        </Suspense>
+        <SWRegister />
+        <Toaster />
+      </body>
     </html>
   );
 }
