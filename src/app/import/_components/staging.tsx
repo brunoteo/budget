@@ -6,13 +6,20 @@ import { commitImportAction, createCategoryForImportAction } from "@/server/acti
 import { SummaryHeader } from "./summary-header";
 import { Row, type RowState } from "./row";
 import { CommitFooter } from "./commit-footer";
+import type { CategoryRecap } from "./staging-host";
 import { copy } from "@/lib/copy";
 import { formatRangeShort } from "@/lib/format/date";
 
 type Props = {
   prepared: Prepared;
   excludedCount: number;
-  onCommitted: (importId: string, count: number, range: { start: string; end: string }) => void;
+  onCommitted: (
+    importId: string,
+    count: number,
+    range: { start: string; end: string },
+    total: number,
+    recap: CategoryRecap[],
+  ) => void;
 };
 
 export function Staging({ prepared, excludedCount, onCommitted }: Props) {
@@ -153,7 +160,16 @@ export function Staging({ prepared, excludedCount, onCommitted }: Props) {
       setError(result.error);
       return;
     }
-    onCommitted(result.importId, result.count, { start: minDate, end: maxDate });
+    const totalsByCategory = new Map<string, { count: number; total: number }>();
+    for (const r of rows) {
+      const prev = totalsByCategory.get(r.appCategoryName) ?? { count: 0, total: 0 };
+      totalsByCategory.set(r.appCategoryName, { count: prev.count + 1, total: prev.total + r.amount });
+    }
+    const recap: CategoryRecap[] = Array.from(totalsByCategory.entries())
+      .map(([appCategoryName, v]) => ({ appCategoryName, count: v.count, total: v.total }))
+      .sort((a, b) => b.total - a.total);
+    const totalAmount = rows.reduce((s, r) => s + r.amount, 0);
+    onCommitted(result.importId, result.count, { start: minDate, end: maxDate }, totalAmount, recap);
   }
 
   return (
