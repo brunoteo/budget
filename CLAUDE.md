@@ -100,6 +100,7 @@ Always run `pnpm typecheck && pnpm lint && pnpm test` before claiming a task com
 - For any DB change: `pnpm db:reset && pnpm test` must be green.
 - `pnpm typecheck && pnpm lint && pnpm test` must all pass.
 - E2E tests must pass before merging UI changes.
+- After running the suite, run `pnpm audit --prod` and confirm zero `high`/`critical` advisories. Resolve any new ones in the same PR.
 
 ## What NOT to do
 
