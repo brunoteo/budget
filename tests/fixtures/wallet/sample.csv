@@ -1,0 +1,10 @@
+account;category;currency;amount;ref_currency_amount;type;payment_type;payment_type_local;note;date;gps_latitude;gps_longitude;gps_accuracy_in_meters;warranty_in_month;transfer;payee;labels;envelope_id;custom_category
+ACME Bank;Carburante;EUR;-83,83;-83,83;Spese;TRANSFER;Bonifico bancario;Benzina;2026-04-28 02:00:00;;;;0;false;;;5000;false
+ACME Bank;Spesa;EUR;-12,40;-12,40;Spese;TRANSFER;Bonifico bancario;Supermercato;2026-04-27 02:00:00;;;;0;false;;;1000;false
+ACME Bank;Stipendio, fatture;EUR;4000,00;4000,00;Entrate;TRANSFER;Bonifico bancario;Stipendio Aprile;2026-04-27 02:00:00;;;;0;false;;;10000;false
+ACME Bank;Telefono, cellulare;EUR;-8,95;-8,95;Spese;TRANSFER;Bonifico bancario;Operatore A;2026-04-26 02:00:00;;;;0;false;;;7001;false
+ACME Bank;Carburante;EUR;-50,00;-50,00;Spese;TRANSFER;Bonifico bancario;Diesel;2026-04-25 02:00:00;;;;0;false;;;5000;false
+ACME Bank;Ristoranti;EUR;-22,00;-22,00;Spese;TRANSFER;Bonifico bancario;Pranzo;2026-04-25 02:00:00;;;;0;false;;;1001;false
+ACME Bank;Spesa;EUR;-8,50;-8,50;Spese;TRANSFER;Bonifico bancario;Pane;2026-04-24 02:00:00;;;;0;false;;;1000;false
+ACME Bank;Carburante;EUR;-60,00;-60,00;Spese;TRANSFER;Bonifico bancario;Benzina (transfer);2026-04-23 02:00:00;;;;0;true;;;5000;false
+ACME Bank;Software, App e Giochi;EUR;-9,99;-9,99;Spese;TRANSFER;Bonifico bancario;Abbonamento;2026-04-22 02:00:00;;;;0;false;;;7003;false
