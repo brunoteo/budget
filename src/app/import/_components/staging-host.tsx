@@ -7,6 +7,7 @@ import { filterRows } from "@/lib/import/filter";
 import { prepareImportAction, type Prepared } from "@/server/actions/import";
 import { copy } from "@/lib/copy";
 import { Staging } from "./staging";
+import { Success } from "./success";
 
 type Phase =
   | { kind: "idle" }
@@ -46,12 +47,7 @@ export function StagingHost() {
     );
   }
   if (phase.kind === "done") {
-    // Task 19 will replace this with <Success />.
-    return (
-      <p className="p-6 font-display text-2xl text-clay-900">
-        {copy.import.successTitle} · {phase.count}
-      </p>
-    );
+    return <Success importId={phase.importId} count={phase.count} range={phase.range} />;
   }
 
   return (
