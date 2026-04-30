@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { copy } from "@/lib/copy";
 import { updateProfileAction } from "@/server/actions/profile";
 import { setCycleSalaryAction } from "@/server/actions/cycle";
@@ -51,6 +52,14 @@ export default async function SettingsPage() {
         </label>
         <button type="submit" className="w-full rounded-lg bg-terra-500 p-3 text-clay-50">{c.save}</button>
       </form>
+
+      <Link
+        href="/settings/mappings"
+        className="flex h-12 w-full items-center justify-between rounded-xl border border-clay-200 bg-clay-50 px-3 font-sans text-clay-900 shadow-sm"
+      >
+        <span>{copy.mappings.settingsLink}</span>
+        <span aria-hidden className="text-clay-400">›</span>
+      </Link>
     </main>
   );
 }
