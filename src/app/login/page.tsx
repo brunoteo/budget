@@ -3,6 +3,7 @@ import { copy } from "@/lib/copy";
 import Link from "next/link";
 
 export default function LoginPage() {
+  const allowSignup = process.env.NEXT_PUBLIC_ALLOW_SIGNUP === "true";
   return (
     <main className="mx-auto max-w-sm p-4 space-y-4">
       <h1 className="text-2xl font-semibold">{copy.auth.loginTitle}</h1>
@@ -17,9 +18,11 @@ export default function LoginPage() {
         </label>
         <button type="submit" className="w-full rounded bg-slate-900 p-3 text-white">{copy.auth.submitLogin}</button>
       </form>
-      <p className="text-sm text-center">
-        {copy.auth.noAccount} <Link href="/signup" className="underline">{copy.auth.goSignup}</Link>
-      </p>
+      {allowSignup && (
+        <p className="text-sm text-center">
+          {copy.auth.noAccount} <Link href="/signup" className="underline">{copy.auth.goSignup}</Link>
+        </p>
+      )}
     </main>
   );
 }
