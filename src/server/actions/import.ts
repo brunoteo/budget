@@ -277,3 +277,36 @@ export async function undoImportAction(rawPayload: unknown): Promise<UndoResult>
   revalidatePath("/");
   return { deleted: count ?? 0 };
 }
+
+const UpdateMappingSchema = z.object({
+  walletCategory: z.string().min(1),
+  appCategoryName: z.string().min(1).max(80),
+});
+
+export async function updateMappingAction(rawPayload: unknown): Promise<{ ok: true } | { error: string }> {
+  const parsed = UpdateMappingSchema.safeParse(rawPayload);
+  if (!parsed.success) return { error: "Dati non validi." };
+  const supabase = await getServerSupabase();
+  const { error } = await supabase
+    .from("import_mappings")
+    .update({ app_category_name: parsed.data.appCategoryName, updated_at: new Date().toISOString() })
+    .eq("wallet_category", parsed.data.walletCategory);
+  if (error) return { error: error.message };
+  revalidatePath("/settings/mappings");
+  return { ok: true };
+}
+
+const DeleteMappingSchema = z.object({ walletCategory: z.string().min(1) });
+
+export async function deleteMappingAction(rawPayload: unknown): Promise<{ ok: true } | { error: string }> {
+  const parsed = DeleteMappingSchema.safeParse(rawPayload);
+  if (!parsed.success) return { error: "Dati non validi." };
+  const supabase = await getServerSupabase();
+  const { error } = await supabase
+    .from("import_mappings")
+    .delete()
+    .eq("wallet_category", parsed.data.walletCategory);
+  if (error) return { error: error.message };
+  revalidatePath("/settings/mappings");
+  return { ok: true };
+}
