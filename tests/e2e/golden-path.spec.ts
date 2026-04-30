@@ -30,6 +30,7 @@ test("golden path: signup → categories → expense → KPI", async ({ page }) 
   await page.click("button[type=submit]");
 
   await expect(page).toHaveURL("/");
+  await expect(page.getByText(/spesa aggiunta/i)).toBeVisible();
   await expect(page.getByText("Carburante")).toBeVisible();
   await expect(page.getByText(/€\s*83,83/).first()).toBeVisible();
 });

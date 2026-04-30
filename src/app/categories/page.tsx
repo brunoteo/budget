@@ -47,7 +47,7 @@ export default async function CategoriesPage() {
               action={async () => { "use server"; await deleteCategoryAction(cat.id); }}
               className="mt-2 text-right"
             >
-              <button type="submit" className="text-sm text-sienna-600 underline underline-offset-2">{c.delete}</button>
+              <button type="submit" className="inline-flex min-h-11 min-w-11 items-center justify-center text-sm text-sienna-600 underline underline-offset-2">{c.delete}</button>
             </form>
           </li>
         ))}
