@@ -1,13 +1,14 @@
 import { loginAction } from "@/server/actions/auth";
 import { copy } from "@/lib/copy";
 import Link from "next/link";
+import { initialResult } from "@/server/actions/result";
 
 export default function LoginPage() {
   const allowSignup = process.env.NEXT_PUBLIC_ALLOW_SIGNUP === "true";
   return (
     <main className="mx-auto max-w-sm p-4 space-y-4">
       <h1 className="text-2xl font-semibold">{copy.auth.loginTitle}</h1>
-      <form action={async (fd) => { "use server"; await loginAction(fd); }} className="space-y-3">
+      <form action={async (fd) => { "use server"; await loginAction(initialResult, fd); }} className="space-y-3">
         <label className="block">
           <span className="text-sm">{copy.auth.email}</span>
           <input name="email" type="email" required className="mt-1 w-full rounded border p-3" autoComplete="email" />
@@ -16,7 +17,7 @@ export default function LoginPage() {
           <span className="text-sm">{copy.auth.password}</span>
           <input name="password" type="password" required minLength={8} className="mt-1 w-full rounded border p-3" autoComplete="current-password" />
         </label>
-        <button type="submit" className="w-full rounded bg-slate-900 p-3 text-white">{copy.auth.submitLogin}</button>
+        <button type="submit" className="w-full rounded bg-clay-900 p-3 text-clay-50">{copy.auth.submitLogin}</button>
       </form>
       {allowSignup && (
         <p className="text-sm text-center">
