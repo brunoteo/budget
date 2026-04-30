@@ -97,6 +97,9 @@ export const copy = {
     goDashboard: "Vai alla dashboard",
     nothingNew: "Nessuna nuova spesa",
     drawerCycleHeader: (range: string) => `Ciclo ${range}`,
+    createPlaceholder: "Nuova categoria…",
+    createButton: "Aggiungi",
+    creating: "Creazione…",
     statusDaAssegnare: "Da assegnare",
     errorCategoryMissing: (cat: string, cycle: string) =>
       `Categoria "${cat}" non esiste nel ciclo ${cycle}. Crea la categoria o aggiorna la mappatura.`,

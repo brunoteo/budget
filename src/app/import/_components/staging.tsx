@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import type { Prepared } from "@/server/actions/import";
-import { commitImportAction } from "@/server/actions/import";
+import { commitImportAction, createCategoryForImportAction } from "@/server/actions/import";
 import { SummaryHeader } from "./summary-header";
 import { Row, type RowState } from "./row";
 import { CommitFooter } from "./commit-footer";
@@ -26,6 +26,9 @@ export function Staging({ prepared, excludedCount, onCommitted }: Props) {
       included: !r.isDuplicate,
     })),
   );
+  const [categoriesByCycle, setCategoriesByCycle] = useState<Record<string, { id: string; name: string }[]>>(
+    () => prepared.categoriesByCycle,
+  );
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -33,7 +36,7 @@ export function Staging({ prepared, excludedCount, onCommitted }: Props) {
     () =>
       prepared.rows.map((r, i): RowState => {
         const cycleStart = r.cycleRange.startDate;
-        const opts = prepared.categoriesByCycle[cycleStart] ?? [];
+        const opts = categoriesByCycle[cycleStart] ?? [];
         const local = locals[i]!;
         return {
           index: i,
@@ -50,8 +53,28 @@ export function Staging({ prepared, excludedCount, onCommitted }: Props) {
           categoryOptions: opts,
         };
       }),
-    [prepared, locals],
+    [prepared, locals, categoriesByCycle],
   );
+
+  async function handleCreateCategory(rowIndex: number, name: string) {
+    setError(null);
+    const row = prepared.rows[rowIndex]!;
+    const result = await createCategoryForImportAction({
+      occurredOn: row.occurredOn,
+      name,
+    });
+    if ("error" in result) {
+      setError(result.error);
+      return;
+    }
+    const cycleStart = row.cycleRange.startDate;
+    setCategoriesByCycle((prev) => {
+      const list = prev[cycleStart] ?? [];
+      if (list.some((c) => c.id === result.id)) return prev;
+      return { ...prev, [cycleStart]: [...list, { id: result.id, name: result.name }] };
+    });
+    pickCategory(rowIndex, result.name);
+  }
 
   function pickCategory(rowIndex: number, name: string) {
     const wallet = prepared.rows[rowIndex]!.walletCategory;
@@ -156,6 +179,7 @@ export function Staging({ prepared, excludedCount, onCommitted }: Props) {
               state={rowStates[i]!}
               onToggleInclude={() => toggleInclude(i)}
               onPickCategory={(name) => pickCategory(i, name)}
+              onCreateCategory={(name) => handleCreateCategory(i, name)}
             />
           ))}
         </section>
