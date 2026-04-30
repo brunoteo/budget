@@ -101,8 +101,6 @@ iOS PWA support, dark mode toggle, and design-system token-only CSS migration ar
 
 ---
 
----
-
 ## Plan 4 — Supabase production hardening (shipped 2026-04-30)
 
 **Goal:** Cut over the public Supabase env var from the legacy anon-JWT name to the new `sb_publishable_*` name Supabase ships in fresh projects, and tighten `docs/deploy.md` so the production wiring runbook leaves no dashboard step undocumented.
