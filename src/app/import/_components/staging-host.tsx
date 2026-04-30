@@ -6,12 +6,14 @@ import { parseWalletCsv, ParseError } from "@/lib/import/parse";
 import { filterRows } from "@/lib/import/filter";
 import { prepareImportAction, type Prepared } from "@/server/actions/import";
 import { copy } from "@/lib/copy";
+import { Staging } from "./staging";
 
 type Phase =
   | { kind: "idle" }
   | { kind: "parsing" }
   | { kind: "error"; message: string }
-  | { kind: "ready"; prepared: Prepared };
+  | { kind: "ready"; prepared: Prepared; excluded: number }
+  | { kind: "done"; importId: string; count: number; range: { start: string; end: string } };
 
 export function StagingHost() {
   const [phase, setPhase] = useState<Phase>({ kind: "idle" });
@@ -20,13 +22,14 @@ export function StagingHost() {
     setPhase({ kind: "parsing" });
     try {
       const parsed = parseWalletCsv(text);
-      const { kept } = filterRows(parsed);
+      const { kept, counts } = filterRows(parsed);
+      const excluded = counts.entrate + counts.transfer + counts.zero;
       const result = await prepareImportAction(kept);
       if ("error" in result) {
         setPhase({ kind: "error", message: result.error });
         return;
       }
-      setPhase({ kind: "ready", prepared: result });
+      setPhase({ kind: "ready", prepared: result, excluded });
     } catch (e) {
       const message = e instanceof ParseError ? copy.import.parseError : copy.import.parseError;
       setPhase({ kind: "error", message });
@@ -34,11 +37,20 @@ export function StagingHost() {
   }
 
   if (phase.kind === "ready") {
-    // Placeholder until Task 18 introduces the real <Staging />.
     return (
-      <div className="p-6 font-sans text-clay-700">
-        Parsed {phase.prepared.rows.length} rows · {phase.prepared.counts.duplicates} duplicates
-      </div>
+      <Staging
+        prepared={phase.prepared}
+        excludedCount={phase.excluded}
+        onCommitted={(importId, count, range) => setPhase({ kind: "done", importId, count, range })}
+      />
+    );
+  }
+  if (phase.kind === "done") {
+    // Task 19 will replace this with <Success />.
+    return (
+      <p className="p-6 font-display text-2xl text-clay-900">
+        {copy.import.successTitle} · {phase.count}
+      </p>
     );
   }
 
