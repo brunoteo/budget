@@ -6,7 +6,7 @@ The app ships in three numbered plans. Each plan is a self-contained slice that 
 |------|--------|-------|-----------|
 | 1 | ✅ Shipped | MVP — manual entry, dashboard, KPIs | [`2026-04-28-budget-mvp.md`](superpowers/plans/2026-04-28-budget-mvp.md) |
 | 2 | ✅ Shipped | Wallet CSV import flow | [`2026-04-29-wallet-csv-import.md`](superpowers/plans/2026-04-29-wallet-csv-import.md) |
-| 3 | 🔜 Next | PWA shell + production hardening (slim) — design: [`2026-04-30-budget-pwa-hardening-design.md`](superpowers/specs/2026-04-30-budget-pwa-hardening-design.md) | _to be written_ |
+| 3 | ✅ Shipped | PWA shell + production hardening | [`2026-04-30-budget-pwa-hardening.md`](superpowers/plans/2026-04-30-budget-pwa-hardening.md) |
 
 ---
 
@@ -63,7 +63,22 @@ The app ships in three numbered plans. Each plan is a self-contained slice that 
 
 ---
 
-## Plan 3 — PWA + production hardening (later)
+## Plan 3 — PWA + production hardening (shipped 2026-04-30)
+
+**Goal:** Make the app feel like an installed mobile app on Android and tighten operational corners so it can run unattended; surface form errors inline; harden security headers.
+
+**Delivered:**
+- Phase 1: env-gated `/signup` lockdown via three independent guards (middleware proxy, page-level check, server action check) — no new registrations without `ALLOW_SIGNUP=true`.
+- Phase 2: per-request CSP nonce injected via middleware + four supporting security headers (`X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`); Dependabot postcss override.
+- Phase 3: unified `ActionResult` contract across 6 Server Actions; inline form errors via `useActionState`; sonner toasts for post-redirect success confirmations.
+- Phase 4: Android PWA shell — web manifest, brand-matched icon set generated from OKLCH tokens, no-op service worker with production-only registration, viewport metadata (`theme-color`, `viewport-fit=cover`), deploy install steps documented.
+- Phase 5: focus-visible ring (2 px terra-500) with clay-50 contrast override on terra-500 backgrounds; `prefers-reduced-motion` rule tightened to include `scroll-behavior: auto`; focus-ring and reduced-motion E2E coverage (4 new Playwright tests); 44×44 px tap-target fixes on category delete button and Sheet/Dialog close buttons.
+
+iOS PWA support, dark mode toggle, and design-system token-only CSS migration are out of scope for Plan 3.
+
+---
+
+## Plan 3 — PWA + production hardening (original scope notes)
 
 **Goal:** Make the app feel like an installed mobile app and tighten the operational corners so it can run unattended.
 
