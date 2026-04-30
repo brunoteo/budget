@@ -15,6 +15,7 @@ export const copy = {
     goLogin: "Accedi",
     goSignup: "Registrati",
     errorGeneric: "Si è verificato un errore. Riprova.",
+    signupDisabled: "Registrazione disabilitata.",
   },
   header: { settings: "Impostazioni", logout: "Esci", cycle: "Ciclo", categories: "Categorie", back: "Indietro" },
   fab: { addExpense: "Aggiungi spesa" },
