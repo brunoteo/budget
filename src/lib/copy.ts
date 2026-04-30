@@ -1,5 +1,5 @@
 export const copy = {
-  app: { title: "Budget", description: "Budget mensile per coppia" },
+  app: { title: "Budget", description: "Budget mensile per coppia", shortName: "Budget" },
   auth: {
     loginTitle: "Accedi",
     signupTitle: "Crea account",
