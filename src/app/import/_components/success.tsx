@@ -6,7 +6,7 @@ import { copy } from "@/lib/copy";
 import { formatEur } from "@/lib/format/eur";
 import { formatRangeShort } from "@/lib/format/date";
 import { undoImportAction } from "@/server/actions/import";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import type { CategoryRecap } from "./staging-host";
 
 type Props = {
@@ -71,24 +71,22 @@ export function Success({ importId, count, range, total, recap }: Props) {
         </div>
       )}
 
-      <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:justify-center">
+      <div className="flex flex-col items-stretch gap-2">
+        <Link href="/" className={buttonVariants({ variant: "default", size: "lg" })}>
+          {copy.import.goDashboard}
+        </Link>
         {state !== "undone" && (
           <Button
             type="button"
-            variant="outline"
-            size="lg"
+            variant="ghost"
+            size="default"
             disabled={state === "pending"}
             onClick={handleUndo}
+            className="text-text-muted"
           >
             {copy.import.undo}
           </Button>
         )}
-        <Link
-          href="/"
-          className="inline-flex h-12 items-center justify-center rounded-md px-6 text-base font-medium text-accent underline-offset-4 hover:underline"
-        >
-          {copy.import.goDashboard}
-        </Link>
       </div>
     </section>
   );

@@ -106,7 +106,7 @@ export const copy = {
     successSubtitle: (n: number, range: string, total: string) => `${n} voci · ${range} · ${total}`,
     recapHeading: "Riepilogo per categoria",
     recapItem: (count: number) => (count === 1 ? "1 spesa" : `${count} spese`),
-    undo: "Annulla",
+    undo: "Annulla importazione",
     undone: "Importazione annullata",
     goDashboard: "Vai alla dashboard",
     nothingNew: "Nessuna nuova spesa",
