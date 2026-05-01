@@ -49,6 +49,10 @@ export const copy = {
     submit: "Salva",
     cancel: "Annulla",
     noCategory: "Nessuna categoria — creane una prima",
+    editTitle: "Modifica spesa",
+    update: "Aggiorna",
+    delete: "Elimina",
+    deleteConfirm: "Eliminare questa spesa?",
   },
   categories: {
     title: "Categorie",
@@ -125,6 +129,7 @@ export const copy = {
   },
   toast: {
     expenseAdded: "Spesa aggiunta",
+    expenseUpdated: "Spesa aggiornata",
     expenseDeleted: "Spesa rimossa",
     categorySaved: "Categoria aggiornata",
     categoryDeleted: "Categoria rimossa",

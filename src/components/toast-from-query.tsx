@@ -6,6 +6,7 @@ import { copy } from "@/lib/copy";
 
 const TOASTS: Record<string, () => void> = {
   expenseAdded:    () => toast.success(copy.toast.expenseAdded),
+  expenseUpdated:  () => toast.success(copy.toast.expenseUpdated),
   expenseDeleted:  () => toast.success(copy.toast.expenseDeleted),
   categorySaved:   () => toast.success(copy.toast.categorySaved),
   categoryDeleted: () => toast.success(copy.toast.categoryDeleted),
