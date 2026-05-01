@@ -20,7 +20,16 @@ export const copy = {
     submittingLogin: "Accesso…",
     submittingSignup: "Creazione…",
   },
-  header: { settings: "Impostazioni", logout: "Esci", cycle: "Ciclo", categories: "Categorie", back: "Indietro" },
+  header: {
+    settings: "Impostazioni",
+    logout: "Esci",
+    cycle: "Ciclo",
+    categories: "Categorie",
+    back: "Indietro",
+    prevCycle: "Ciclo precedente",
+    nextCycle: "Ciclo successivo",
+    today: "Oggi",
+  },
   fab: { addExpense: "Aggiungi spesa" },
   dashboard: {
     salary: "Stipendio",

@@ -62,3 +62,14 @@ export function nextCycle(current: CycleRange, startDay: number): CycleRange {
   const end = addDays(ny2, nm2, nd2, -1);
   return { start, end };
 }
+
+export function prevCycle(current: CycleRange, startDay: number): CycleRange {
+  const { y, m } = parseISO(current.start);
+  const py = m === 0 ? y - 1 : y;
+  const pm = m === 0 ? 11 : m - 1;
+  const pd = clampDay(py, pm, startDay);
+  const start = iso(py, pm, pd);
+  const cd = clampDay(y, m, startDay);
+  const end = addDays(y, m, cd, -1);
+  return { start, end };
+}
