@@ -6,22 +6,41 @@ import { AppHeader } from "@/components/app-header";
 import { Fab } from "@/components/fab";
 import { copy } from "@/lib/copy";
 import { formatEur } from "@/lib/format/eur";
+import { computeCycleForDate, nextCycle, prevCycle } from "@/lib/cycle/compute";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
-export default async function DashboardPage() {
+export default async function DashboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ cycle?: string }>;
+}) {
   const today = new Date().toISOString().slice(0, 10);
-  const data = await getDashboardForToday(today);
+  const sp = await searchParams;
+  const cycleParam = typeof sp.cycle === "string" && /^\d{4}-\d{2}-\d{2}$/.test(sp.cycle) ? sp.cycle : undefined;
+  const data = await getDashboardForToday(today, cycleParam);
   if (!data) redirect("/login");
+
+  const startDay = data.profile.cycleStartDay;
+  const prevStart = prevCycle(data.cycle.range, startDay).start;
+  const nextStart = nextCycle(data.cycle.range, startDay).start;
+  const todayCycle = computeCycleForDate(today, startDay);
+  const isCurrentCycle = data.cycle.range.start === todayCycle.start;
 
   const pct = (n: number) => `${(n * 100).toFixed(1)}%`;
   const c = copy.dashboard;
 
   return (
     <>
-      <AppHeader displayName={data.profile.displayName} range={data.cycle.range} />
+      <AppHeader
+        displayName={data.profile.displayName}
+        range={data.cycle.range}
+        prevCycleStart={prevStart}
+        nextCycleStart={nextStart}
+        isCurrentCycle={isCurrentCycle}
+      />
       <main className="mx-auto max-w-3xl space-y-3 p-4 pb-24">
         <section className="grid grid-cols-2 gap-2 md:grid-cols-4">
           <KpiCard label={c.salary} primary={data.cycle.salary ?? 0} />
