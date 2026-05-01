@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { computeCycleForDate, nextCycle } from "@/lib/cycle/compute";
+import { computeCycleForDate, nextCycle, prevCycle } from "@/lib/cycle/compute";
 import { cycleLabel } from "@/lib/cycle/label";
 
 describe("computeCycleForDate", () => {
@@ -62,6 +62,26 @@ describe("nextCycle", () => {
     const next = nextCycle({ start: "2026-01-31", end: "2026-02-27" }, 31);
     expect(next.start).toBe("2026-02-28");
     expect(next.end).toBe("2026-03-30");
+  });
+});
+
+describe("prevCycle", () => {
+  it("rolls a 27-cycle back by one month", () => {
+    const prev = prevCycle({ start: "2026-04-27", end: "2026-05-26" }, 27);
+    expect(prev.start).toBe("2026-03-27");
+    expect(prev.end).toBe("2026-04-26");
+  });
+
+  it("crosses year boundary going back from January", () => {
+    const prev = prevCycle({ start: "2026-01-27", end: "2026-02-26" }, 27);
+    expect(prev.start).toBe("2025-12-27");
+    expect(prev.end).toBe("2026-01-26");
+  });
+
+  it("clamps when previous month is shorter than start_day", () => {
+    const prev = prevCycle({ start: "2026-03-31", end: "2026-04-29" }, 31);
+    expect(prev.start).toBe("2026-02-28");
+    expect(prev.end).toBe("2026-03-30");
   });
 });
 

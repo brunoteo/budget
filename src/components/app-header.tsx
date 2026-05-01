@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { List, Upload, Settings, LogOut } from "lucide-react";
+import { ChevronLeft, ChevronRight, List, Upload, Settings, LogOut } from "lucide-react";
 import { copy } from "@/lib/copy";
 import { cycleLabel } from "@/lib/cycle/label";
 import type { CycleRange } from "@/lib/cycle/compute";
@@ -8,7 +8,18 @@ import { logoutAction } from "@/server/actions/auth";
 const iconButtonClass =
   "grid h-11 w-11 place-items-center rounded-full text-clay-700 transition-colors hover:bg-clay-200 active:bg-clay-300";
 
-export function AppHeader({ displayName, range }: { displayName: string; range: CycleRange }) {
+const cycleNavClass =
+  "grid h-9 w-9 place-items-center rounded-full text-clay-700 transition-colors hover:bg-clay-200 active:bg-clay-300";
+
+type Props = {
+  displayName: string;
+  range: CycleRange;
+  prevCycleStart: string;
+  nextCycleStart: string;
+  isCurrentCycle: boolean;
+};
+
+export function AppHeader({ displayName, range, prevCycleStart, nextCycleStart, isCurrentCycle }: Props) {
   return (
     <header className="sticky top-0 z-10 border-b border-border-muted bg-background/90 backdrop-blur">
       <div className="mx-auto flex max-w-3xl items-center justify-between gap-2 px-4 py-3">
@@ -17,8 +28,34 @@ export function AppHeader({ displayName, range }: { displayName: string; range: 
             <span className="font-display text-sm leading-none text-accent">il quaderno</span>
             <span className="truncate text-xs text-text-muted">· {displayName}</span>
           </div>
-          <div className="mt-1 font-display text-lg leading-tight text-text-primary">
-            {cycleLabel(range)}
+          <div className="mt-1 flex items-center gap-1">
+            <Link
+              href={`/?cycle=${prevCycleStart}`}
+              className={cycleNavClass}
+              aria-label={copy.header.prevCycle}
+              title={copy.header.prevCycle}
+            >
+              <ChevronLeft className="h-4 w-4" strokeWidth={1.5} aria-hidden />
+            </Link>
+            <div className="font-display text-lg leading-tight text-text-primary">
+              {cycleLabel(range)}
+            </div>
+            <Link
+              href={`/?cycle=${nextCycleStart}`}
+              className={cycleNavClass}
+              aria-label={copy.header.nextCycle}
+              title={copy.header.nextCycle}
+            >
+              <ChevronRight className="h-4 w-4" strokeWidth={1.5} aria-hidden />
+            </Link>
+            {!isCurrentCycle && (
+              <Link
+                href="/"
+                className="ml-1 rounded-full px-2 py-0.5 text-xs font-medium text-accent transition-colors hover:bg-clay-200"
+              >
+                {copy.header.today}
+              </Link>
+            )}
           </div>
         </div>
 
