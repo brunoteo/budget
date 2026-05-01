@@ -40,6 +40,41 @@ export async function createExpenseAction(
   redirect("/?toast=expenseAdded");
 }
 
+const UpdateExpenseSchema = z.object({
+  id: z.string().uuid(),
+  amount: z.coerce.number().nonnegative(),
+  categoryId: z.string().uuid(),
+  occurredOn: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  note: z.string().max(500).optional().nullable(),
+});
+
+export async function updateExpenseAction(
+  _prev: ActionResult<ExpenseFields>,
+  formData: FormData,
+): Promise<ActionResult<ExpenseFields>> {
+  const parsed = UpdateExpenseSchema.safeParse(Object.fromEntries(formData));
+  if (!parsed.success) return fromZod<ExpenseFields>(parsed.error);
+  try {
+    const cycleId = await ensureCycleForDate(parsed.data.occurredOn);
+    const supabase = await getServerSupabase();
+    const { error } = await supabase
+      .from("expenses")
+      .update({
+        cycle_id: cycleId,
+        category_id: parsed.data.categoryId,
+        amount: parsed.data.amount,
+        occurred_on: parsed.data.occurredOn,
+        note: parsed.data.note ?? null,
+      })
+      .eq("id", parsed.data.id);
+    if (error) return { ok: false, fieldErrors: {}, formError: error.message };
+  } catch {
+    return { ok: false, fieldErrors: {}, formError: copy.toast.unexpectedError };
+  }
+  revalidatePath("/");
+  redirect("/?toast=expenseUpdated");
+}
+
 export async function deleteExpenseAction(id: string) {
   const supabase = await getServerSupabase();
   const { error } = await supabase.from("expenses").delete().eq("id", id);
