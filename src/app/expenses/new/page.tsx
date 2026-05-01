@@ -1,7 +1,7 @@
 import { copy } from "@/lib/copy";
 import { getDashboardForToday } from "@/server/queries/dashboard";
 import { BackLink } from "@/components/back-link";
-import { ExpenseForm } from "./_components/expense-form";
+import { ExpenseForm } from "@/components/expense-form";
 
 export const dynamic = "force-dynamic";
 
