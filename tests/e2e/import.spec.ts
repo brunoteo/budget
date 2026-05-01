@@ -68,6 +68,6 @@ test("wallet csv import: upload → resolve → commit → undo", async ({ page 
   await expect(page.getByRole("heading", { name: "Spese annotate" })).toBeVisible({ timeout: 5000 });
 
   // 10. Undo.
-  await page.getByRole("button", { name: "Annulla" }).click();
+  await page.getByRole("button", { name: "Annulla importazione" }).click();
   await expect(page.getByRole("heading", { name: "Importazione annullata" })).toBeVisible({ timeout: 5000 });
 });
