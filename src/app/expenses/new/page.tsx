@@ -1,7 +1,7 @@
 import { copy } from "@/lib/copy";
 import { getDashboardForToday } from "@/server/queries/dashboard";
 import { BackLink } from "@/components/back-link";
-import { ExpenseForm } from "./_components/expense-form";
+import { ExpenseForm } from "@/components/expense-form";
 
 export const dynamic = "force-dynamic";
 
@@ -16,7 +16,7 @@ export default async function NewExpensePage() {
         <BackLink label={copy.header.back} />
         <h1 className="font-display text-2xl text-text-primary">{copy.expense.newTitle}</h1>
       </div>
-      <ExpenseForm categories={cats} defaultDate={today} />
+      <ExpenseForm mode="create" categories={cats} defaultDate={today} />
     </main>
   );
 }
