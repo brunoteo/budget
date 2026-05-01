@@ -16,7 +16,7 @@ export default async function NewExpensePage() {
         <BackLink label={copy.header.back} />
         <h1 className="font-display text-2xl text-text-primary">{copy.expense.newTitle}</h1>
       </div>
-      <ExpenseForm categories={cats} defaultDate={today} />
+      <ExpenseForm mode="create" categories={cats} defaultDate={today} />
     </main>
   );
 }
