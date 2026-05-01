@@ -1,6 +1,10 @@
 "use client";
 
 import { Toaster as SonnerToaster, type ToasterProps } from "sonner";
+// Sonner injects its CSS at runtime via document.createElement('style'), which
+// gets blocked by our CSP (style-src has a nonce, so 'unsafe-inline' is ignored
+// per spec). Import the bundled stylesheet so it lands in the nonced app CSS.
+import "sonner/dist/styles.css";
 
 export function Toaster(props: ToasterProps) {
   return (
