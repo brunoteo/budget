@@ -7,22 +7,24 @@ export function Toaster(props: ToasterProps) {
     <SonnerToaster
       position="bottom-center"
       theme="light"
-      richColors
-      closeButton
       duration={4000}
-      gap={12}
-      offset={24}
+      gap={8}
+      offset={16}
+      mobileOffset={{ left: "16px", right: "16px", bottom: "16px" }}
       dir="ltr"
       toastOptions={{
         classNames: {
-          toast: "rounded-md border border-clay-200 bg-white text-clay-900 shadow-md",
-          title: "font-medium",
-          description: "text-clay-600",
-          success: "border-sage-500 bg-white text-sage-600",
-          error: "border-terra-500 bg-clay-50 text-terra-700",
-          actionButton: "bg-terra-500 text-clay-50",
-          cancelButton: "bg-clay-200 text-clay-700",
-          closeButton: "text-clay-500 hover:text-clay-900",
+          toast:
+            "!rounded-lg !border !p-4 !gap-3 !shadow-md !font-sans !text-sm",
+          title: "!font-medium !leading-snug",
+          description: "!text-clay-600 !leading-snug",
+          success: "!bg-white !text-clay-900 !border-sage-500/40 [&_[data-icon]]:!text-sage-600",
+          error: "!bg-white !text-clay-900 !border-sienna-500/40 [&_[data-icon]]:!text-sienna-600",
+          info: "!bg-white !text-clay-900 !border-clay-200",
+          warning:
+            "!bg-white !text-clay-900 !border-budget-amber-500/40 [&_[data-icon]]:!text-budget-amber-600",
+          actionButton: "!bg-terra-500 !text-clay-50",
+          cancelButton: "!bg-clay-200 !text-clay-700",
         },
       }}
       {...props}
