@@ -5,13 +5,14 @@ import { Toaster as SonnerToaster, type ToasterProps } from "sonner";
 export function Toaster(props: ToasterProps) {
   return (
     <SonnerToaster
-      position="bottom-center"
+      position="top-center"
       theme="light"
       duration={4000}
       gap={8}
       offset={16}
-      mobileOffset={{ left: "16px", right: "16px", bottom: "16px" }}
+      mobileOffset={{ left: "16px", right: "16px", top: "16px" }}
       dir="ltr"
+      className="!fixed !z-[9999]"
       toastOptions={{
         classNames: {
           toast:
