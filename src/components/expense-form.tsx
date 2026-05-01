@@ -3,33 +3,58 @@ import { useActionState } from "react";
 import Link from "next/link";
 import { ChevronDown } from "lucide-react";
 import { copy } from "@/lib/copy";
-import { createExpenseAction } from "@/server/actions/expense";
+import { createExpenseAction, updateExpenseAction } from "@/server/actions/expense";
 import { initialResult } from "@/server/actions/result";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 type Field = "amount" | "categoryId" | "occurredOn" | "note";
+type Cat = { id: string; name: string };
+type Expense = {
+  id: string;
+  amount: number;
+  categoryId: string;
+  occurredOn: string;
+  note: string | null;
+};
+
+type Props =
+  | { mode: "create"; categories: Cat[]; defaultDate: string }
+  | { mode: "edit"; categories: Cat[]; expense: Expense };
 
 const fieldShellClass =
   "h-11 w-full rounded-md border border-input bg-surface px-3 text-base text-text-primary outline-none transition-colors focus-visible:border-accent focus-visible:ring-2 focus-visible:ring-accent/30 aria-invalid:border-destructive aria-invalid:ring-2 aria-invalid:ring-destructive/25";
 
-export function ExpenseForm({
-  categories,
-  defaultDate,
-}: {
-  categories: { id: string; name: string }[];
-  defaultDate: string;
-}) {
+export function ExpenseForm(props: Props) {
   const c = copy.expense;
-  const [state, action, pending] = useActionState(createExpenseAction, initialResult);
+  const action = props.mode === "edit" ? updateExpenseAction : createExpenseAction;
+  const [state, formAction, pending] = useActionState(action, initialResult);
   const fieldErr = (k: Field) => (!state.ok ? state.fieldErrors[k] : undefined);
+
+  const defaults = props.mode === "edit"
+    ? {
+        amount: String(props.expense.amount),
+        categoryId: props.expense.categoryId,
+        occurredOn: props.expense.occurredOn,
+        note: props.expense.note ?? "",
+      }
+    : {
+        amount: "",
+        categoryId: undefined as string | undefined,
+        occurredOn: props.defaultDate,
+        note: "",
+      };
+
+  const submitLabel = props.mode === "edit" ? c.update : c.submit;
 
   return (
     <form
-      action={action}
+      action={formAction}
       noValidate
       className="space-y-5 rounded-lg border border-border bg-surface p-5 shadow-sm"
     >
+      {props.mode === "edit" && <input type="hidden" name="id" value={props.expense.id} />}
+
       <div className="space-y-2">
         <label htmlFor="amount" className="block text-sm font-medium text-text-primary">
           {c.amount}
@@ -42,6 +67,7 @@ export function ExpenseForm({
           min="0"
           required
           inputMode="decimal"
+          defaultValue={defaults.amount}
           className="font-mono tabular-nums text-md"
           aria-invalid={fieldErr("amount") ? true : undefined}
           aria-describedby={fieldErr("amount") ? "amount-err" : undefined}
@@ -62,13 +88,14 @@ export function ExpenseForm({
             id="categoryId"
             name="categoryId"
             required
-            disabled={categories.length === 0}
+            disabled={props.categories.length === 0}
+            defaultValue={defaults.categoryId}
             aria-invalid={fieldErr("categoryId") ? true : undefined}
             aria-describedby={fieldErr("categoryId") ? "category-err" : undefined}
             className={`${fieldShellClass} appearance-none pr-10 disabled:opacity-60`}
           >
-            {categories.length === 0 && <option>{c.noCategory}</option>}
-            {categories.map((cat) => (
+            {props.categories.length === 0 && <option>{c.noCategory}</option>}
+            {props.categories.map((cat) => (
               <option key={cat.id} value={cat.id}>{cat.name}</option>
             ))}
           </select>
@@ -93,7 +120,7 @@ export function ExpenseForm({
           id="occurredOn"
           name="occurredOn"
           type="date"
-          defaultValue={defaultDate}
+          defaultValue={defaults.occurredOn}
           required
           aria-invalid={fieldErr("occurredOn") ? true : undefined}
           aria-describedby={fieldErr("occurredOn") ? "date-err" : undefined}
@@ -114,6 +141,7 @@ export function ExpenseForm({
           id="note"
           name="note"
           maxLength={500}
+          defaultValue={defaults.note}
           aria-invalid={fieldErr("note") ? true : undefined}
           aria-describedby={fieldErr("note") ? "note-err" : undefined}
         />
@@ -136,7 +164,7 @@ export function ExpenseForm({
           {c.cancel}
         </Link>
         <Button type="submit" disabled={pending} size="lg" className="flex-1">
-          {pending ? "…" : c.submit}
+          {pending ? "…" : submitLabel}
         </Button>
       </div>
     </form>
