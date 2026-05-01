@@ -113,7 +113,7 @@ Always run `pnpm typecheck && pnpm lint && pnpm test` before claiming a task com
 
 ## External docs
 
-When looking up library APIs (Next.js, Supabase, shadcn/ui, Recharts, Zod, Tailwind), use the `context7` MCP server (e.g. `mcp__plugin_context7_context7__query-docs`) rather than relying on memory. Library APIs change frequently.
+When looking up library APIs (Next.js, Supabase, shadcn/ui, Recharts, Zod, Tailwind), use the `context7` MCP server (e.g. `mcp__plugin_context7_context7__query-docs`) rather than relying on memory. Library APIs change frequently. Check also @AGENTS.md for Next.js documentation
 
 ## Maintenance
 
