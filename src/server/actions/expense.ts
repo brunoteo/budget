@@ -80,5 +80,5 @@ export async function deleteExpenseAction(id: string) {
   const { error } = await supabase.from("expenses").delete().eq("id", id);
   if (error) return { error: error.message };
   revalidatePath("/");
-  return { ok: true };
+  redirect("/?toast=expenseDeleted");
 }
