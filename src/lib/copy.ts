@@ -25,6 +25,8 @@ export const copy = {
     logout: "Esci",
     cycle: "Ciclo",
     categories: "Categorie",
+    import: "Importa",
+    menu: "Menù",
     back: "Indietro",
     prevCycle: "Ciclo precedente",
     nextCycle: "Ciclo successivo",
