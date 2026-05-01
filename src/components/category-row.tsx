@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import { useState } from "react";
 import { formatEur } from "@/lib/format/eur";
 import { formatDate } from "@/lib/format/date";
@@ -63,12 +64,20 @@ export function CategoryRow({ name, expected, actual, isFixed, overBudget, trans
           ) : (
             <ul className="divide-y divide-border-muted">
               {transactions.map((t) => (
-                <li key={t.id} className="flex justify-between gap-2 p-2">
-                  <span>
-                    <span className="font-mono tabular-nums text-text-muted">{formatDate(t.occurredOn)}</span>
-                    {t.note && <em className="ml-2 text-clay-800">{t.note}</em>}
-                  </span>
-                  <span className="font-mono tabular-nums">− {formatEur(t.amount)}</span>
+                <li key={t.id}>
+                  <Link
+                    href={`/expenses/${t.id}/edit`}
+                    className="flex min-h-11 items-center justify-between gap-2 p-2 transition-colors hover:bg-clay-100"
+                  >
+                    <span>
+                      <span className="font-mono tabular-nums text-text-muted">{formatDate(t.occurredOn)}</span>
+                      {t.note && <em className="ml-2 text-clay-800">{t.note}</em>}
+                    </span>
+                    <span className="flex items-center gap-2">
+                      <span className="font-mono tabular-nums">− {formatEur(t.amount)}</span>
+                      <span className="text-clay-400" aria-hidden>›</span>
+                    </span>
+                  </Link>
                 </li>
               ))}
             </ul>
