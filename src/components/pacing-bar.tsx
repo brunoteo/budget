@@ -1,11 +1,17 @@
 import { copy } from "@/lib/copy";
+import { formatEur } from "@/lib/format/eur";
 
-type Props = { percentConsumed: number; cycleProgress: number; paceDelta: number };
+type Props = {
+  percentConsumed: number;
+  cycleProgress: number;
+  paceDelta: number;
+  forecast?: { total: number; deltaVsBudget: number; hasData: boolean } | null;
+};
 
 const clamp = (n: number) => Math.max(0, Math.min(1, n));
 const pct = (n: number) => `${clamp(n) * 100}%`;
 
-export function PacingBar({ percentConsumed, cycleProgress, paceDelta }: Props) {
+export function PacingBar({ percentConsumed, cycleProgress, paceDelta, forecast }: Props) {
   const under = paceDelta <= 0;
   const status = under ? copy.dashboard.pacingUnder : copy.dashboard.pacingOver;
   const statusClass = under ? "text-sage-600" : "text-sienna-600";
@@ -65,6 +71,28 @@ export function PacingBar({ percentConsumed, cycleProgress, paceDelta }: Props) 
           </div>
         </div>
       </div>
+
+      {forecast && (
+        <div className="mt-1 flex items-baseline justify-between gap-3 border-t border-dashed border-border-muted pt-3">
+          <span className="text-sm text-text-muted">{copy.dashboard.forecastLabel}</span>
+          <span className="flex items-baseline gap-2 whitespace-nowrap">
+            <span className="font-display text-base text-text-primary tabular-nums">
+              {formatEur(forecast.total)}
+            </span>
+            {forecast.hasData && Math.abs(forecast.deltaVsBudget) >= 0.005 && (
+              <span
+                className={`text-xs font-medium tabular-nums ${
+                  forecast.deltaVsBudget > 0 ? "text-sienna-600" : "text-sage-600"
+                }`}
+              >
+                {forecast.deltaVsBudget > 0
+                  ? copy.dashboard.forecastDeltaOver(formatEur(forecast.deltaVsBudget))
+                  : copy.dashboard.forecastDeltaUnder(formatEur(Math.abs(forecast.deltaVsBudget)))}
+              </span>
+            )}
+          </span>
+        </div>
+      )}
     </section>
   );
 }

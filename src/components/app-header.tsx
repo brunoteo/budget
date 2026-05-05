@@ -4,6 +4,7 @@ import Link from "next/link";
 import {
   ChevronLeft,
   ChevronRight,
+  LineChart,
   List,
   LogOut,
   MoreVertical,
@@ -57,7 +58,15 @@ export function AppHeader({
               · {displayName}
             </span>
           </div>
-          <div className="-mr-2 sm:hidden">
+          <div className="-mr-2 flex items-center gap-1 sm:hidden">
+            <Link
+              href="/trends"
+              className={tapTarget}
+              aria-label={copy.trends.headerLink}
+              title={copy.trends.headerLink}
+            >
+              <LineChart className="h-5 w-5" strokeWidth={1.5} aria-hidden />
+            </Link>
             <ActionsMenu />
           </div>
         </div>
@@ -92,7 +101,15 @@ export function AppHeader({
           )}
         </div>
 
-        <div className="hidden sm:-mr-2 sm:flex sm:flex-1 sm:justify-end">
+        <div className="hidden sm:-mr-2 sm:flex sm:flex-1 sm:items-center sm:justify-end sm:gap-1">
+          <Link
+            href="/trends"
+            className={tapTarget}
+            aria-label={copy.trends.headerLink}
+            title={copy.trends.headerLink}
+          >
+            <LineChart className="h-5 w-5" strokeWidth={1.5} aria-hidden />
+          </Link>
           <ActionsMenu />
         </div>
       </div>

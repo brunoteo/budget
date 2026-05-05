@@ -8,6 +8,7 @@ The app ships in three numbered plans. Each plan is a self-contained slice that 
 | 2 | ✅ Shipped | Wallet CSV import flow | [`2026-04-29-wallet-csv-import.md`](superpowers/plans/2026-04-29-wallet-csv-import.md) |
 | 3 | ✅ Shipped | PWA shell + production hardening | [`2026-04-30-budget-pwa-hardening.md`](superpowers/plans/2026-04-30-budget-pwa-hardening.md) |
 | 4 | ✅ Shipped | Supabase production hardening (publishable-key rename + deploy runbook) | [`2026-04-30-supabase-prod-hardening.md`](superpowers/plans/2026-04-30-supabase-prod-hardening.md) |
+| 5 | ✅ Shipped | Forecast on dashboard + trends expansion | [`2026-05-05-forecast-trends.md`](superpowers/plans/2026-05-05-forecast-trends.md) |
 
 ---
 
@@ -110,6 +111,22 @@ iOS PWA support, dark mode toggle, and design-system token-only CSS migration ar
 - Phase 2: `docs/deploy.md` Auth → URL Configuration promoted to a numbered step; publishable-key naming through the runbook; explicit "do NOT set service-role key in Vercel" callout.
 
 No new tables, no new server actions, no UI change. All existing tests still pass unchanged.
+
+---
+
+## Plan 5 — Forecast + trends expansion (shipped 2026-05-05)
+
+**Goal:** End-of-cycle forecast inside the existing "Andamento ciclo" card and a four-section `/trends` page (totale, top movers, per-category sparklines, year rollup) reachable from the dashboard kebab menu.
+
+**Delivered:**
+- Pure forecast lib (`src/lib/forecast/`) — anchors pacing on the latest expense `occurred_on`; fixed categories project at `expected_amount`; variable categories pace from current spend; empty cycle falls back to the budget total. Surfaces only on the current cycle.
+- Pure trends lib (`src/lib/trends/`) — `groupByCategory` (joined via `foldName`), `computeTopMovers` (last cycle vs previous, ranked by absolute Δ), `computeYearRollup` (last 12 vs prior 12, % delta with 2% noise floor).
+- Server query refactor: `getTrendCycles` replaced by `getTrendsData(12)`, batched with two `IN` queries instead of 24 round-trips.
+- Three new presentational components: `<TopMovers>`, `<CategorySparklines>` (raw SVG, no extra dependency), `<YearRollupTable>`.
+- "Andamento" entry in the header kebab menu.
+- 5 forecast unit tests, 17 trends unit tests, 3 trends integration tests, 1 trends E2E test.
+
+No schema changes. No new dependencies.
 
 ---
 
