@@ -2,7 +2,7 @@
 
 A two-user personal-budget web application replacing a manual Google Sheet. Each spouse has an isolated account with their own data and their own pay-cycle (e.g., 27th-to-26th, 10th-to-9th). The app's distinguishing feature is paycheck-day-aligned monthly cycles. Italian-only UI. Mobile-first.
 
-**Status:** MVP shipped (Plan 1). Plan 2 (Wallet CSV import) shipped. Plan 3 (PWA + production hardening) shipped. Plan 4 (Supabase production hardening) shipped.
+**Status:** MVP shipped (Plan 1). Plan 2 (Wallet CSV import) shipped. Plan 3 (PWA + production hardening) shipped. Plan 4 (Supabase production hardening) shipped. Plan 5 (Forecast + trends expansion) shipped.
 
 **Git author:** always commit as `brunoteo <brunoteo@hotmail.it>`. The local repo `.git/config` already pins `user.name` and `user.email` to these values — do not override them globally. Remote: `https://github.com/brunoteo/budget.git`.
 
@@ -23,6 +23,7 @@ src/
   app/                    # routes (pages + server actions co-located via app router)
     /import               # Wallet CSV import flow
     /settings/mappings    # persisted Wallet → app category mappings
+    /trends               # cycle trends, top movers, sparklines, year rollup
   components/
     ui/                   # shadcn-derived primitives
   lib/
