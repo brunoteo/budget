@@ -97,6 +97,25 @@ type CatSpec = { name: string; expected: number; isFixed: boolean };
 
 function categoriesFor(spec: CycleSpec, ageIndex: number): CatSpec[] {
   // ageIndex 0 = oldest, N_CYCLES - 1 = current.
+  if (spec.isCurrent) {
+    // Stress scenario: many lump-sum early-cycle expenses (mirrors real-world Wallet import).
+    // Used to verify the forecast does NOT explode from per-category extrapolation.
+    return [
+      { name: "Casa", expected: 800, isFixed: true },
+      { name: "Mutuo", expected: 530, isFixed: true },
+      { name: "Assicurazione", expected: 212, isFixed: true },
+      { name: "Leasing", expected: 487, isFixed: true },
+      { name: "Abbonamento", expected: 118.75, isFixed: true },
+      { name: "Spesa alimentare", expected: 50, isFixed: false },
+      { name: "Carburante", expected: 20, isFixed: false },
+      { name: "Trasporti", expected: 47.3, isFixed: false },
+      { name: "Svago", expected: 70, isFixed: false },
+      { name: "Salute", expected: 200, isFixed: false },
+      { name: "Risparmi", expected: 1000, isFixed: false },
+      { name: "Vacanze", expected: 372, isFixed: false },
+      { name: "Regali", expected: 20, isFixed: false },
+    ];
+  }
   const cats: CatSpec[] = [
     { name: "Casa", expected: ageIndex < 6 ? 700 : ageIndex < 12 ? 800 : 850, isFixed: true },
     { name: "Spesa", expected: 400, isFixed: false },
@@ -144,20 +163,18 @@ function expensesForPastCycle(cat: CatSpec, ageIndex: number): ExpenseSeed[] {
   return [];
 }
 
-function expensesForCurrentCycle(cat: CatSpec, currentStart: string): ExpenseSeed[] {
-  // Today is day-of-month per the project context; use 5 as a safe default.
-  // Overspend Spesa to make the forecast delta clearly sienna.
-  const dayInCycle = (iso: string) => `${currentStart.slice(0, 8)}${pad(Number(iso.slice(8, 10)))}`;
-  void dayInCycle;
-  if (cat.name === "Casa") return [{ amount: 850, day: 1 }];
-  if (cat.name === "Bollette") return []; // not yet paid
-  if (cat.name === "Spesa") {
-    return [
-      { amount: 50, day: 2, note: "Supermercato" },
-      { amount: 60, day: 4, note: "Mercato" },
-    ];
-  }
-  if (cat.name === "Carburante") return [{ amount: 25, day: 3, note: "Benzina" }];
+function expensesForCurrentCycle(cat: CatSpec): ExpenseSeed[] {
+  // Lump-sum early-cycle scenario: mirrors a Wallet bulk import on day 1-3 of cycle.
+  // Pre-fix bug: per-category extrapolation projected this to ~€35k vs ~€4k budget.
+  if (cat.isFixed) return [{ amount: cat.expected, day: 1 }];
+  if (cat.name === "Spesa alimentare") return [];
+  if (cat.name === "Carburante") return [{ amount: 83.83, day: 2, note: "Benzina" }];
+  if (cat.name === "Trasporti") return [];
+  if (cat.name === "Svago") return [{ amount: 1.37, day: 3, note: "Caffè" }];
+  if (cat.name === "Salute") return [{ amount: 23.5, day: 1, note: "Farmacia" }];
+  if (cat.name === "Risparmi") return [{ amount: 1000, day: 2, note: "Trasferimento" }];
+  if (cat.name === "Vacanze") return [{ amount: 372, day: 2, note: "Hotel" }];
+  if (cat.name === "Regali") return [];
   return [];
 }
 
@@ -199,7 +216,7 @@ async function seedCycle(userId: string, spec: CycleSpec, ageIndex: number): Pro
     note: string | null;
   }> = [];
   for (const { id, cat } of inserted) {
-    const seeds = spec.isCurrent ? expensesForCurrentCycle(cat, spec.start) : expensesForPastCycle(cat, ageIndex);
+    const seeds = spec.isCurrent ? expensesForCurrentCycle(cat) : expensesForPastCycle(cat, ageIndex);
     for (const s of seeds) {
       const day = Math.min(s.day, eom);
       rows.push({
