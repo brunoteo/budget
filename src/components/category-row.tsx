@@ -42,12 +42,12 @@ export function CategoryRow({ name, expected, actual, isFixed, overBudget, trans
                 </span>
               )}
               {overBudget && (
-                <span className="ml-2 rounded-sm bg-over-budget-bg px-1.5 py-0.5 text-[0.65rem] text-sienna-600">
+                <span className="ml-2 inline-block whitespace-nowrap rounded-sm bg-over-budget-bg px-1.5 py-0.5 text-[0.65rem] text-sienna-600">
                   +{formatEur(actual - expected)}
                 </span>
               )}
             </span>
-            <span className="font-mono text-sm tabular-nums text-clay-700">
+            <span className="shrink-0 whitespace-nowrap font-mono text-sm tabular-nums text-clay-700">
               {formatEur(actual)} <span className="text-clay-400">/ {formatEur(expected)}</span>
             </span>
           </div>
