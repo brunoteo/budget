@@ -7,6 +7,7 @@ import { Fab } from "@/components/fab";
 import { copy } from "@/lib/copy";
 import { formatEur } from "@/lib/format/eur";
 import { computeCycleForDate, nextCycle, prevCycle } from "@/lib/cycle/compute";
+import { computeForecast } from "@/lib/forecast/compute";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 
@@ -28,6 +29,22 @@ export default async function DashboardPage({
   const nextStart = nextCycle(data.cycle.range, startDay).start;
   const todayCycle = computeCycleForDate(today, startDay);
   const isCurrentCycle = data.cycle.range.start === todayCycle.start;
+
+  const forecast = isCurrentCycle
+    ? computeForecast({
+        cycle: data.cycle.range,
+        categories: data.categories.map((c) => ({
+          id: c.id,
+          expectedAmount: c.expectedAmount,
+          isFixed: c.isFixed,
+        })),
+        expenses: data.expenses.map((e) => ({
+          categoryId: e.categoryId,
+          amount: e.amount,
+          occurredOn: e.occurredOn,
+        })),
+      })
+    : null;
 
   const pct = (n: number) => `${(n * 100).toFixed(1)}%`;
   const c = copy.dashboard;
@@ -52,6 +69,7 @@ export default async function DashboardPage({
           percentConsumed={data.kpi.percentConsumed}
           cycleProgress={data.kpi.cycleProgress}
           paceDelta={data.kpi.paceDelta}
+          forecast={forecast}
         />
         <section className="space-y-2">
           <h2 className="px-1 text-xs uppercase tracking-wider text-text-muted">
