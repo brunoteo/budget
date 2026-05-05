@@ -29,49 +29,65 @@ export default async function TrendsPage() {
   const rollup = computeYearRollup(data.recent, data.prior);
 
   return (
-    <main className="mx-auto w-full max-w-3xl space-y-6 p-4 sm:p-6">
+    <main className="mx-auto w-full max-w-3xl space-y-8 p-4 sm:p-6">
       <PageHeader />
 
-      <section className="space-y-2">
-        <h2 className="px-1 text-xs uppercase tracking-wider text-text-muted">
-          {copy.trends.totalHeading(recentCount)}
-        </h2>
-        <div className="rounded-lg border border-border bg-surface p-4 shadow-sm">
-          <TrendsChart data={data.recent} />
-        </div>
-      </section>
+      <div className="space-y-4">
+        <GroupHeader
+          title={copy.trends.groupAnnualTitle}
+          subtitle={copy.trends.groupAnnualSubtitle(recentCount)}
+        />
+
+        <section className="space-y-2">
+          <h3 className="px-1 text-xs uppercase tracking-wider text-text-muted">
+            {copy.trends.totalHeading}
+          </h3>
+          <div className="rounded-lg border border-border bg-surface p-4 shadow-sm">
+            <TrendsChart data={data.recent} />
+          </div>
+        </section>
+
+        {recentCount >= 2 && (
+          <>
+            <section className="space-y-2">
+              <h3 className="px-1 text-xs uppercase tracking-wider text-text-muted">
+                {copy.trends.perCategoryHeading}
+              </h3>
+              <CategorySparklines series={series} mediaLabel={copy.trends.averageLabel} />
+            </section>
+
+            <section className="space-y-2">
+              <h3 className="px-1 text-xs uppercase tracking-wider text-text-muted">
+                {copy.trends.rollupHeading}
+              </h3>
+              <YearRollupTable
+                rows={rollup}
+                labels={{
+                  category: copy.trends.tableCategory,
+                  total: copy.trends.tableTotal,
+                  average: copy.trends.tableAverage,
+                  delta: copy.trends.tableDelta,
+                }}
+              />
+            </section>
+          </>
+        )}
+      </div>
 
       {recentCount >= 2 ? (
-        <>
+        <div className="space-y-4">
+          <GroupHeader
+            title={copy.trends.groupMonthlyTitle}
+            subtitle={copy.trends.groupMonthlySubtitle}
+          />
+
           <section className="space-y-2">
-            <h2 className="px-1 text-xs uppercase tracking-wider text-text-muted">
+            <h3 className="px-1 text-xs uppercase tracking-wider text-text-muted">
               {copy.trends.moversHeading}
-            </h2>
+            </h3>
             <TopMovers movers={movers} />
           </section>
-
-          <section className="space-y-2">
-            <h2 className="px-1 text-xs uppercase tracking-wider text-text-muted">
-              {copy.trends.perCategoryHeading(recentCount)}
-            </h2>
-            <CategorySparklines series={series} mediaLabel={copy.trends.averageLabel} />
-          </section>
-
-          <section className="space-y-2">
-            <h2 className="px-1 text-xs uppercase tracking-wider text-text-muted">
-              {copy.trends.rollupHeading}
-            </h2>
-            <YearRollupTable
-              rows={rollup}
-              labels={{
-                category: copy.trends.tableCategory,
-                total: copy.trends.tableTotal,
-                average: copy.trends.tableAverage,
-                delta: copy.trends.tableDelta,
-              }}
-            />
-          </section>
-        </>
+        </div>
       ) : (
         <div className="rounded-lg border border-dashed border-border bg-surface p-6 text-center">
           <p className="text-sm text-text-muted">{copy.trends.notEnoughCycles}</p>
@@ -87,5 +103,14 @@ function PageHeader() {
       <BackLink label={copy.header.back} />
       <h1 className="font-display text-2xl text-text-primary">{copy.trends.title}</h1>
     </div>
+  );
+}
+
+function GroupHeader({ title, subtitle }: { title: string; subtitle: string }) {
+  return (
+    <header className="px-1">
+      <h2 className="font-display text-lg text-text-primary">{title}</h2>
+      <p className="text-xs text-text-muted">{subtitle}</p>
+    </header>
   );
 }
