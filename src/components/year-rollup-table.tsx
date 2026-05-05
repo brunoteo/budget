@@ -36,9 +36,9 @@ export function YearRollupTable({ rows, labels }: { rows: YearRollupRow[]; label
             return (
               <tr key={r.key} className="border-b border-border-muted/50 last:border-b-0">
                 <td className="px-3 py-2 text-text-primary">{r.displayName}</td>
-                <td className="px-3 py-2 text-right font-mono tabular-nums">{formatEur(r.totalSpent)}</td>
-                <td className="px-3 py-2 text-right font-mono tabular-nums">{formatEur(r.averageSpent)}</td>
-                <td className={`px-3 py-2 text-right font-mono tabular-nums ${deltaClass}`}>{deltaCell}</td>
+                <td className="whitespace-nowrap px-3 py-2 text-right font-mono tabular-nums">{formatEur(r.totalSpent)}</td>
+                <td className="whitespace-nowrap px-3 py-2 text-right font-mono tabular-nums">{formatEur(r.averageSpent)}</td>
+                <td className={`whitespace-nowrap px-3 py-2 text-right font-mono tabular-nums ${deltaClass}`}>{deltaCell}</td>
               </tr>
             );
           })}
