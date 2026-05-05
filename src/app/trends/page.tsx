@@ -32,6 +32,26 @@ export default async function TrendsPage() {
     <main className="mx-auto w-full max-w-3xl space-y-8 p-4 sm:p-6">
       <PageHeader />
 
+      {recentCount >= 2 ? (
+        <div className="space-y-4">
+          <GroupHeader
+            title={copy.trends.groupMonthlyTitle}
+            subtitle={copy.trends.groupMonthlySubtitle}
+          />
+
+          <section className="space-y-2">
+            <h3 className="px-1 text-xs uppercase tracking-wider text-text-muted">
+              {copy.trends.moversHeading}
+            </h3>
+            <TopMovers movers={movers} />
+          </section>
+        </div>
+      ) : (
+        <div className="rounded-lg border border-dashed border-border bg-surface p-6 text-center">
+          <p className="text-sm text-text-muted">{copy.trends.notEnoughCycles}</p>
+        </div>
+      )}
+
       <div className="space-y-4">
         <GroupHeader
           title={copy.trends.groupAnnualTitle}
@@ -73,26 +93,6 @@ export default async function TrendsPage() {
           </>
         )}
       </div>
-
-      {recentCount >= 2 ? (
-        <div className="space-y-4">
-          <GroupHeader
-            title={copy.trends.groupMonthlyTitle}
-            subtitle={copy.trends.groupMonthlySubtitle}
-          />
-
-          <section className="space-y-2">
-            <h3 className="px-1 text-xs uppercase tracking-wider text-text-muted">
-              {copy.trends.moversHeading}
-            </h3>
-            <TopMovers movers={movers} />
-          </section>
-        </div>
-      ) : (
-        <div className="rounded-lg border border-dashed border-border bg-surface p-6 text-center">
-          <p className="text-sm text-text-muted">{copy.trends.notEnoughCycles}</p>
-        </div>
-      )}
     </main>
   );
 }
