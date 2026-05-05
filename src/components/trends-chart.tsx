@@ -46,7 +46,7 @@ export function TrendsChart({ data }: { data: CycleSummary[] }) {
           />
           <Tooltip
             formatter={(v) => formatEur(Number(v))}
-            labelFormatter={formatMonthYear}
+            labelFormatter={(label) => (typeof label === "string" ? formatMonthYear(label) : String(label))}
             contentStyle={{ fontSize: 12, borderRadius: 8 }}
           />
           <Legend wrapperStyle={{ fontSize: 12 }} iconSize={10} />
