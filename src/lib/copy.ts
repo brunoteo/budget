@@ -50,9 +50,9 @@ export const copy = {
     noCategories: "Nessuna categoria.",
     addOne: "Aggiungine una",
     noTransactions: "Nessuna transazione.",
-    forecastLabel: "Previsione fine ciclo",
-    forecastDeltaOver: (amount: string) => `+ ${amount} sopra il budget`,
-    forecastDeltaUnder: (amount: string) => `− ${amount} sotto il budget`,
+    forecastLabel: "Previsione",
+    forecastDeltaOver: (amount: string) => `+ ${amount}`,
+    forecastDeltaUnder: (amount: string) => `− ${amount}`,
   },
   expense: {
     newTitle: "Nuova spesa",
