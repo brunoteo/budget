@@ -33,6 +33,7 @@ export default async function DashboardPage({
   const forecast = isCurrentCycle
     ? computeForecast({
         cycle: data.cycle.range,
+        today,
         categories: data.categories.map((c) => ({
           id: c.id,
           expectedAmount: c.expectedAmount,
