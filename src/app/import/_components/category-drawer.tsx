@@ -1,9 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer";
 import { copy } from "@/lib/copy";
 import { formatRangeShort } from "@/lib/format/date";
+
+const categoryCollator = new Intl.Collator("it", { sensitivity: "base" });
 
 type Props = {
   trigger: React.ReactNode;
@@ -17,6 +19,11 @@ export function CategoryDrawer({ trigger, cycleRange, options, onSelect, onCreat
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState("");
   const [creating, setCreating] = useState(false);
+
+  const sortedOptions = useMemo(
+    () => [...options].sort((a, b) => categoryCollator.compare(a.name, b.name)),
+    [options],
+  );
 
   async function handleCreate() {
     if (!onCreate) return;
@@ -48,7 +55,7 @@ export function CategoryDrawer({ trigger, cycleRange, options, onSelect, onCreat
           </DrawerTitle>
         </DrawerHeader>
         <ul className="max-h-[50vh] overflow-y-auto">
-          {options.map((o) => (
+          {sortedOptions.map((o) => (
             <li key={o.id}>
               <button
                 type="button"
@@ -62,7 +69,7 @@ export function CategoryDrawer({ trigger, cycleRange, options, onSelect, onCreat
               </button>
             </li>
           ))}
-          {options.length === 0 && (
+          {sortedOptions.length === 0 && (
             <li className="px-6 py-4 font-sans text-sm text-clay-500">Nessuna categoria nel ciclo.</li>
           )}
         </ul>
