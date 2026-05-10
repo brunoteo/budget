@@ -18,6 +18,7 @@ type Props = {
 export function CategoryRow({ name, expected, actual, isFixed, overBudget, transactions }: Props) {
   const [open, setOpen] = useState(false);
   const fillPct = expected === 0 ? (actual > 0 ? 100 : 0) : Math.min(100, (actual / expected) * 100);
+  const underBudget = !overBudget && !isFixed && expected > 0 && actual < expected;
   const fillClass = overBudget
     ? "bg-sienna-500"
     : actual === expected && expected > 0
@@ -44,6 +45,11 @@ export function CategoryRow({ name, expected, actual, isFixed, overBudget, trans
               {overBudget && (
                 <span className="ml-2 inline-block whitespace-nowrap rounded-sm bg-over-budget-bg px-1.5 py-0.5 text-[0.65rem] text-sienna-600">
                   +{formatEur(actual - expected)}
+                </span>
+              )}
+              {underBudget && (
+                <span className="ml-2 inline-block whitespace-nowrap rounded-sm bg-under-budget-bg px-1.5 py-0.5 text-[0.65rem] text-sage-600">
+                  −{formatEur(expected - actual)}
                 </span>
               )}
             </span>
