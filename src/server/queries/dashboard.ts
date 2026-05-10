@@ -3,6 +3,7 @@ import { getServerSupabase } from "@/lib/db/server";
 import { computeCycleForDate, nextCycle } from "@/lib/cycle/compute";
 import type { CycleRange } from "@/lib/cycle/compute";
 import { computeKpis, type Kpi } from "@/lib/kpi/compute";
+import { sortCategoriesByName } from "@/lib/category/sort";
 
 export type DashboardData = {
   profile: { id: string; displayName: string; cycleStartDay: number; defaultSalary: number | null };
@@ -42,13 +43,15 @@ export async function getDashboardForToday(today: string, cycleStartOverride?: s
   const { data: cats } = await supabase.from("categories").select("*").eq("cycle_id", cycleRow.id).order("sort_order");
   const { data: exps } = await supabase.from("expenses").select("*").eq("cycle_id", cycleRow.id).order("occurred_on", { ascending: false });
 
-  const categories = (cats ?? []).map((c) => ({
-    id: c.id,
-    name: c.name,
-    expectedAmount: Number(c.expected_amount),
-    isFixed: c.is_fixed,
-    sortOrder: c.sort_order,
-  }));
+  const categories = sortCategoriesByName(
+    (cats ?? []).map((c) => ({
+      id: c.id,
+      name: c.name,
+      expectedAmount: Number(c.expected_amount),
+      isFixed: c.is_fixed,
+      sortOrder: c.sort_order,
+    })),
+  );
   const expenses = (exps ?? []).map((e) => ({
     id: e.id,
     categoryId: e.category_id,

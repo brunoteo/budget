@@ -4,8 +4,7 @@ import { useMemo, useState } from "react";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer";
 import { copy } from "@/lib/copy";
 import { formatRangeShort } from "@/lib/format/date";
-
-const categoryCollator = new Intl.Collator("it", { sensitivity: "base" });
+import { sortCategoriesByName } from "@/lib/category/sort";
 
 type Props = {
   trigger: React.ReactNode;
@@ -20,10 +19,7 @@ export function CategoryDrawer({ trigger, cycleRange, options, onSelect, onCreat
   const [draft, setDraft] = useState("");
   const [creating, setCreating] = useState(false);
 
-  const sortedOptions = useMemo(
-    () => [...options].sort((a, b) => categoryCollator.compare(a.name, b.name)),
-    [options],
-  );
+  const sortedOptions = useMemo(() => sortCategoriesByName(options), [options]);
 
   async function handleCreate() {
     if (!onCreate) return;
