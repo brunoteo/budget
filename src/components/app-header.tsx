@@ -67,7 +67,7 @@ export function AppHeader({
             >
               <LineChart className="h-5 w-5" strokeWidth={1.5} aria-hidden />
             </Link>
-            <ActionsMenu />
+            <ActionsMenu cycleStart={range.start} isCurrentCycle={isCurrentCycle} />
           </div>
         </div>
 
@@ -110,14 +110,15 @@ export function AppHeader({
           >
             <LineChart className="h-5 w-5" strokeWidth={1.5} aria-hidden />
           </Link>
-          <ActionsMenu />
+          <ActionsMenu cycleStart={range.start} isCurrentCycle={isCurrentCycle} />
         </div>
       </div>
     </header>
   );
 }
 
-function ActionsMenu() {
+function ActionsMenu({ cycleStart, isCurrentCycle }: { cycleStart: string; isCurrentCycle: boolean }) {
+  const categoriesHref = isCurrentCycle ? "/categories" : `/categories?cycle=${cycleStart}`;
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
@@ -132,7 +133,7 @@ function ActionsMenu() {
         sideOffset={8}
         className="w-52 p-1"
       >
-        <DropdownMenuItem className={menuItem} render={<Link href="/categories" />}>
+        <DropdownMenuItem className={menuItem} render={<Link href={categoriesHref} />}>
           <List className="h-4 w-4" strokeWidth={1.5} aria-hidden />
           {copy.header.categories}
         </DropdownMenuItem>

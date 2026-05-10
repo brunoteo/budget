@@ -6,6 +6,21 @@ import { redirect } from "next/navigation";
 import { copy } from "@/lib/copy";
 import { fromZod, type ActionResult } from "./result";
 
+const CycleSlugSchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
+
+function readCycleSlug(formData: FormData): string | undefined {
+  const raw = formData.get("cycleSlug");
+  if (typeof raw !== "string") return undefined;
+  const parsed = CycleSlugSchema.safeParse(raw);
+  return parsed.success ? parsed.data : undefined;
+}
+
+function categoriesRedirect(toast: string, cycleSlug?: string): string {
+  return cycleSlug
+    ? `/categories?cycle=${cycleSlug}&toast=${toast}`
+    : `/categories?toast=${toast}`;
+}
+
 const CreateSchema = z.object({
   cycleId: z.string().uuid(),
   name: z.string().min(1).max(80),
@@ -23,6 +38,7 @@ export async function createCategoryAction(
 ): Promise<ActionResult<CategoryFields>> {
   const parsed = CreateSchema.safeParse(Object.fromEntries(formData));
   if (!parsed.success) return fromZod<CategoryFields>(parsed.error);
+  const cycleSlug = readCycleSlug(formData);
   try {
     const supabase = await getServerSupabase();
     const { error } = await supabase.from("categories").insert({
@@ -36,7 +52,7 @@ export async function createCategoryAction(
     return { ok: false, fieldErrors: {}, formError: copy.toast.unexpectedError };
   }
   revalidatePath("/");
-  redirect("/categories?toast=categorySaved");
+  redirect(categoriesRedirect("categorySaved", cycleSlug));
 }
 
 export async function updateCategoryAction(
@@ -45,6 +61,7 @@ export async function updateCategoryAction(
 ): Promise<ActionResult<CategoryFields | "id">> {
   const parsed = UpdateSchema.safeParse(Object.fromEntries(formData));
   if (!parsed.success) return fromZod<CategoryFields | "id">(parsed.error);
+  const cycleSlug = readCycleSlug(formData);
   const { id, ...rest } = parsed.data;
   try {
     const supabase = await getServerSupabase();
@@ -58,15 +75,16 @@ export async function updateCategoryAction(
     return { ok: false, fieldErrors: {}, formError: copy.toast.unexpectedError };
   }
   revalidatePath("/");
-  redirect("/categories?toast=categorySaved");
+  redirect(categoriesRedirect("categorySaved", cycleSlug));
 }
 
-export async function deleteCategoryAction(id: string) {
+export async function deleteCategoryAction(id: string, formData?: FormData) {
+  const cycleSlug = formData ? readCycleSlug(formData) : undefined;
   const supabase = await getServerSupabase();
   const { error } = await supabase.from("categories").delete().eq("id", id);
   if (error) return { error: copy.errors.categoryHasExpenses };
   revalidatePath("/");
-  redirect("/categories?toast=categoryDeleted");
+  redirect(categoriesRedirect("categoryDeleted", cycleSlug));
 }
 
 const CarrySchema = z.object({ targetCycleId: z.string().uuid() });
@@ -101,5 +119,7 @@ export async function carryForwardCategoriesAction(formData: FormData) {
   if (error) return { error: error.message };
   revalidatePath("/");
   revalidatePath("/categories");
+  const cycleSlug = readCycleSlug(formData);
+  if (cycleSlug) redirect(`/categories?cycle=${cycleSlug}`);
   return { ok: true, count: rows.length };
 }
