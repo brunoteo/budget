@@ -1,5 +1,6 @@
 import "server-only";
 import { getServerSupabase } from "@/lib/db/server";
+import { sortCategoriesByName } from "@/lib/category/sort";
 
 export type ExpenseForEdit = {
   expense: {
@@ -35,6 +36,6 @@ export async function getExpenseForEdit(id: string): Promise<ExpenseForEdit | nu
       note: row.note,
       cycleId: row.cycle_id,
     },
-    categories: (cats ?? []).map((c) => ({ id: c.id, name: c.name, isFixed: c.is_fixed })),
+    categories: sortCategoriesByName((cats ?? []).map((c) => ({ id: c.id, name: c.name, isFixed: c.is_fixed }))),
   };
 }
