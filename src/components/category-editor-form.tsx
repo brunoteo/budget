@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 
 type Field = "cycleId" | "name" | "expectedAmount" | "isFixed";
 
-export function CategoryEditorForm({ cycleId }: { cycleId: string }) {
+export function CategoryEditorForm({ cycleId, cycleSlug }: { cycleId: string; cycleSlug?: string }) {
   const c = copy.categories;
   const [state, action, pending] = useActionState(createCategoryAction, initialResult);
   const fieldErr = (k: Field) => (!state.ok ? state.fieldErrors[k] : undefined);
@@ -21,6 +21,7 @@ export function CategoryEditorForm({ cycleId }: { cycleId: string }) {
     >
       <h2 className="font-display text-lg text-text-primary">{c.addTitle}</h2>
       <input type="hidden" name="cycleId" value={cycleId} />
+      {cycleSlug && <input type="hidden" name="cycleSlug" value={cycleSlug} />}
       <Input
         name="name"
         required

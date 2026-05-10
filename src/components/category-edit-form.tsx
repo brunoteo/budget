@@ -11,12 +11,15 @@ type Field = "cycleId" | "name" | "expectedAmount" | "isFixed" | "id";
 
 export function CategoryEditForm({
   defaults,
+  cycleSlug,
 }: {
   defaults: { id: string; name: string; expectedAmount: number; isFixed: boolean };
+  cycleSlug?: string;
 }) {
   const c = copy.categories;
   const [state, action, pending] = useActionState(updateCategoryAction, initialResult);
   const fieldErr = (k: Field) => (!state.ok ? state.fieldErrors[k] : undefined);
+  const cancelHref = cycleSlug ? `/categories?cycle=${cycleSlug}` : "/categories";
 
   return (
     <form
@@ -26,6 +29,7 @@ export function CategoryEditForm({
     >
       <h2 className="font-display text-lg text-text-primary">{c.editTitle}</h2>
       <input type="hidden" name="id" value={defaults.id} />
+      {cycleSlug && <input type="hidden" name="cycleSlug" value={cycleSlug} />}
       <Input
         name="name"
         required
@@ -74,7 +78,7 @@ export function CategoryEditForm({
           {c.save}
         </Button>
         <Link
-          href="/categories"
+          href={cancelHref}
           className="inline-flex min-h-11 flex-1 items-center justify-center rounded-md border border-border bg-surface px-4 text-text-primary transition-colors hover:bg-clay-200"
         >
           {c.cancel}
