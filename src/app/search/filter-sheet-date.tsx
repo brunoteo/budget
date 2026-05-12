@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Calendar } from "lucide-react";
 import { copy } from "@/lib/copy";
 import {
-  Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger,
+  Sheet, SheetContent, SheetFooter, SheetHeader, SheetTitle, SheetTrigger,
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -53,41 +53,43 @@ export function FilterSheetDate({ from, to, basePath, searchParams }: Props) {
       <SheetTrigger className={chipClass}>
         <Calendar className="mr-1 inline h-3 w-3" aria-hidden /> {copy.search.chipDate}
       </SheetTrigger>
-      <SheetContent side="bottom" className="space-y-4">
+      <SheetContent side="bottom">
         <SheetHeader>
           <SheetTitle>{copy.search.chipDate}</SheetTitle>
         </SheetHeader>
-        <div className="grid grid-cols-2 gap-2">
-          <Button variant="outline" onClick={() => apply(shiftDays(today, -30), today)}>
-            {copy.search.rangePresetLast30}
-          </Button>
-          <Button variant="outline" onClick={() => apply(shiftDays(today, -60), today)}>
-            {copy.search.rangePresetLast60}
-          </Button>
-          <Button variant="outline" onClick={() => apply(shiftDays(today, -90), today)}>
-            {copy.search.rangePresetLast90}
-          </Button>
-        </div>
-        <div className="space-y-2">
-          <label className="block text-sm">{copy.search.rangePresetCustom}</label>
-          <div className="flex gap-2">
-            <Input
-              type="date"
-              value={localFrom}
-              onChange={(e) => setLocalFrom(e.target.value)}
-            />
-            <Input
-              type="date"
-              value={localTo}
-              onChange={(e) => setLocalTo(e.target.value)}
-            />
+        <div className="space-y-4 px-4 pb-2">
+          <div className="grid grid-cols-3 gap-2">
+            <Button variant="outline" size="sm" onClick={() => apply(shiftDays(today, -30), today)}>
+              {copy.search.rangePresetLast30}
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => apply(shiftDays(today, -60), today)}>
+              {copy.search.rangePresetLast60}
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => apply(shiftDays(today, -90), today)}>
+              {copy.search.rangePresetLast90}
+            </Button>
+          </div>
+          <div className="space-y-2">
+            <label className="block text-sm">{copy.search.rangePresetCustom}</label>
+            <div className="flex gap-2">
+              <Input
+                type="date"
+                value={localFrom}
+                onChange={(e) => setLocalFrom(e.target.value)}
+              />
+              <Input
+                type="date"
+                value={localTo}
+                onChange={(e) => setLocalTo(e.target.value)}
+              />
+            </div>
           </div>
         </div>
-        <div className="pt-2">
+        <SheetFooter>
           <Button onClick={() => apply(localFrom, localTo)} className="w-full">
             {copy.search.applyButton}
           </Button>
-        </div>
+        </SheetFooter>
       </SheetContent>
     </Sheet>
   );
