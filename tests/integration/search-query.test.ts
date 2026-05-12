@@ -121,6 +121,16 @@ describe("getSearchResults", () => {
     ]);
   });
 
+  it("matches by category name in text search", async () => {
+    const res = await getSearchResultsWithClient(aliceClient, {
+      q: "auto", from: "2026-01-01", to: "2026-12-31",
+      min: null, max: null, categoryIds: [], offset: 0,
+    });
+    // Auto category has one expense
+    expect(res.rows).toHaveLength(1);
+    expect(res.rows[0]!.categoryName).toBe("Auto");
+  });
+
   it("escapes wildcard characters in q", async () => {
     const res = await getSearchResultsWithClient(aliceClient, {
       q: "%nopattern%", from: "2026-01-01", to: "2026-12-31",
