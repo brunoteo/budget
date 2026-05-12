@@ -7,6 +7,13 @@ import { redirect } from "next/navigation";
 import { copy } from "@/lib/copy";
 import { fromZod, type ActionResult } from "./result";
 
+function safeReturn(raw: FormDataEntryValue | null, fallback: string): string {
+  if (typeof raw !== "string") return fallback;
+  if (!raw.startsWith("/")) return fallback;
+  if (raw.startsWith("//")) return fallback;
+  return raw;
+}
+
 const ExpenseSchema = z.object({
   amount: z.coerce.number().nonnegative(),
   categoryId: z.string().uuid(),
@@ -72,13 +79,17 @@ export async function updateExpenseAction(
     return { ok: false, fieldErrors: {}, formError: copy.toast.unexpectedError };
   }
   revalidatePath("/");
-  redirect("/?toast=expenseUpdated");
+  const back = safeReturn(formData.get("return"), "/?toast=expenseUpdated");
+  const sep = back.includes("?") ? "&" : "?";
+  redirect(`${back}${sep}toast=expenseUpdated`);
 }
 
-export async function deleteExpenseAction(id: string) {
+export async function deleteExpenseAction(id: string, returnTo?: string) {
   const supabase = await getServerSupabase();
   const { error } = await supabase.from("expenses").delete().eq("id", id);
   if (error) return { error: error.message };
   revalidatePath("/");
-  redirect("/?toast=expenseDeleted");
+  const back = safeReturn(returnTo ?? null, "/?toast=expenseDeleted");
+  const sep = back.includes("?") ? "&" : "?";
+  redirect(`${back}${sep}toast=expenseDeleted`);
 }

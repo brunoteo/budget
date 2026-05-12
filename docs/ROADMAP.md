@@ -9,6 +9,7 @@ The app ships in three numbered plans. Each plan is a self-contained slice that 
 | 3 | ✅ Shipped | PWA shell + production hardening | [`2026-04-30-budget-pwa-hardening.md`](superpowers/plans/2026-04-30-budget-pwa-hardening.md) |
 | 4 | ✅ Shipped | Supabase production hardening (publishable-key rename + deploy runbook) | [`2026-04-30-supabase-prod-hardening.md`](superpowers/plans/2026-04-30-supabase-prod-hardening.md) |
 | 5 | ✅ Shipped | Forecast on dashboard + trends expansion | [`2026-05-05-forecast-trends.md`](superpowers/plans/2026-05-05-forecast-trends.md) |
+| 6 | ✅ Shipped | Cross-cycle transaction search | [`2026-05-12-search-transactions.md`](superpowers/plans/2026-05-12-search-transactions.md) |
 
 ---
 
@@ -127,6 +128,23 @@ No new tables, no new server actions, no UI change. All existing tests still pas
 - 5 forecast unit tests, 17 trends unit tests, 3 trends integration tests, 1 trends E2E test.
 
 No schema changes. No new dependencies.
+
+---
+
+## Plan 6 — Cross-cycle transaction search (shipped 2026-05-12)
+
+**Goal:** Dedicated `/search` page where each user can find any past expense by free-text, date, amount, or category, with results grouped by cycle and a tap-through to the existing edit/delete flow.
+
+**Delivered:**
+- Pure libs (`src/lib/search/`): `parseFilters`, `serializeFilters`, `groupByCycle`, shared types and `SEARCH_LIMIT`.
+- Server query `getSearchResults` against Supabase using `cycles!inner` + `categories!inner` joins; counts come from PostgREST `count: "exact"`. Totals are summed in JS (Supabase has PostgREST aggregates disabled). Free-text matches notes plus category names (resolved as a separate RLS-scoped query, then combined via single-table OR on `category_id`).
+- Migration `0009_search_indexes.sql`: `pg_trgm` extension + GIN index on `expenses.note`.
+- New route `/search` with sticky filter bar, three bottom-sheet pickers (date / amount / category), debounced text input, paginated `Carica altri`.
+- "Ricerca" entry added to header kebab.
+- `updateExpenseAction` and `deleteExpenseAction` now honor an optional `return` param so search → edit → return preserves filters.
+- Tests: 6 + 4 + 3 unit, 8 integration (incl. RLS), 1 Playwright E2E.
+
+No new dependencies.
 
 ---
 
