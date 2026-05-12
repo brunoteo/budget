@@ -10,7 +10,7 @@ export function Fab() {
       aria-label={copy.fab.addExpense}
       data-focus-ring="contrast"
     >
-      <Plus className="h-6 w-6" strokeWidth={2} aria-hidden />
+      <Plus className="h-6 w-6" strokeWidth={1.5} aria-hidden />
     </Link>
   );
 }
