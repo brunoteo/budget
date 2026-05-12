@@ -9,8 +9,8 @@ describe("computeForecast", () => {
       cycle,
       today: "2026-05-06",
       categories: [
-        { id: "a", expectedAmount: 500, isFixed: false },
-        { id: "b", expectedAmount: 850, isFixed: true },
+        { id: "a", expectedAmount: 500 },
+        { id: "b", expectedAmount: 850 },
       ],
       expenses: [],
     });
@@ -21,24 +21,6 @@ describe("computeForecast", () => {
     expect(f.anchorDate).toBeNull();
   });
 
-  it("fixed category projects at expected_amount regardless of actual spend", () => {
-    const f = computeForecast({
-      cycle,
-      today: "2026-04-30",
-      categories: [
-        { id: "rent", expectedAmount: 850, isFixed: true },
-      ],
-      expenses: [
-        { categoryId: "rent", amount: 850, occurredOn: "2026-04-30" },
-      ],
-    });
-    expect(f.perCategory).toEqual([{ id: "rent", projected: 850 }]);
-    expect(f.total).toBeCloseTo(850);
-    expect(f.deltaVsBudget).toBeCloseTo(0);
-    expect(f.hasData).toBe(true);
-    expect(f.anchorDate).toBe("2026-04-30");
-  });
-
   it("variable category paces from cycle elapsed (today), capped at expected × 1.5", () => {
     // 30-day cycle starting 2026-04-27. Today = 2026-05-06 → day 10.
     // Spent 100 by day 10 → naive = 100 × 30/10 = 300. Cap = max(100, 250 × 1.5) = 375.
@@ -47,7 +29,7 @@ describe("computeForecast", () => {
       cycle,
       today: "2026-05-06",
       categories: [
-        { id: "groceries", expectedAmount: 250, isFixed: false },
+        { id: "groceries", expectedAmount: 250 },
       ],
       expenses: [
         { categoryId: "groceries", amount: 60, occurredOn: "2026-05-01" },
@@ -67,7 +49,7 @@ describe("computeForecast", () => {
     const f = computeForecast({
       cycle,
       today: "2026-05-05",
-      categories: [{ id: "savings", expectedAmount: 1000, isFixed: false }],
+      categories: [{ id: "savings", expectedAmount: 1000 }],
       expenses: [{ categoryId: "savings", amount: 1000, occurredOn: "2026-04-28" }],
     });
     expect(f.perCategory[0]!.projected).toBeCloseTo(1500);
@@ -79,19 +61,19 @@ describe("computeForecast", () => {
     const f = computeForecast({
       cycle,
       today: "2026-05-26",
-      categories: [{ id: "x", expectedAmount: 50, isFixed: false }],
+      categories: [{ id: "x", expectedAmount: 50 }],
       expenses: [{ categoryId: "x", amount: 100, occurredOn: "2026-04-27" }],
     });
     expect(f.perCategory[0]!.projected).toBeCloseTo(100);
   });
 
-  it("variable category with no expenses falls back to expected_amount", () => {
+  it("category with no expenses falls back to expected_amount", () => {
     const f = computeForecast({
       cycle,
       today: "2026-04-30",
       categories: [
-        { id: "carb", expectedAmount: 100, isFixed: false },
-        { id: "groceries", expectedAmount: 250, isFixed: false },
+        { id: "carb", expectedAmount: 100 },
+        { id: "groceries", expectedAmount: 250 },
       ],
       expenses: [
         { categoryId: "carb", amount: 50, occurredOn: "2026-04-30" },
@@ -106,32 +88,11 @@ describe("computeForecast", () => {
     expect(f.deltaVsBudget).toBeCloseTo(50);
   });
 
-  it("mixed fixed + variable cycle", () => {
-    const f = computeForecast({
-      cycle,
-      today: "2026-05-11",
-      categories: [
-        { id: "rent", expectedAmount: 850, isFixed: true },
-        { id: "groceries", expectedAmount: 250, isFixed: false },
-      ],
-      expenses: [
-        { categoryId: "rent", amount: 850, occurredOn: "2026-05-01" },
-        { categoryId: "groceries", amount: 100, occurredOn: "2026-05-11" },
-      ],
-    });
-    // rent: fixed, projects 850. groceries: day 15 of 30, naive 100 × 2 = 200. cap 375. → 200. total 1050.
-    expect(f.perCategory.find((c) => c.id === "rent")!.projected).toBeCloseTo(850);
-    expect(f.perCategory.find((c) => c.id === "groceries")!.projected).toBeCloseTo(200);
-    expect(f.total).toBeCloseTo(1050);
-    expect(f.deltaVsBudget).toBeCloseTo(-50);
-    expect(f.anchorDate).toBe("2026-05-11");
-  });
-
   it("today clamped to cycle length when today exceeds cycle.end", () => {
     const f = computeForecast({
       cycle,
       today: "2026-06-15",
-      categories: [{ id: "x", expectedAmount: 100, isFixed: false }],
+      categories: [{ id: "x", expectedAmount: 100 }],
       expenses: [{ categoryId: "x", amount: 100, occurredOn: "2026-06-15" }],
     });
     // elapsed clamped to 30 → naive 100. floor 100. cap max(100, 150)=150. → 100.

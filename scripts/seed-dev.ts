@@ -93,7 +93,16 @@ function buildCycleSpecs(): CycleSpec[] {
   return out;
 }
 
-type CatSpec = { name: string; expected: number; isFixed: boolean };
+type CatSpec = { name: string; expected: number };
+
+const LUMP_SUM_NAMES = new Set([
+  "Casa",
+  "Mutuo",
+  "Assicurazione",
+  "Leasing",
+  "Abbonamento",
+  "Bollette",
+]);
 
 function categoriesFor(spec: CycleSpec, ageIndex: number): CatSpec[] {
   // ageIndex 0 = oldest, N_CYCLES - 1 = current.
@@ -101,29 +110,29 @@ function categoriesFor(spec: CycleSpec, ageIndex: number): CatSpec[] {
     // Stress scenario: many lump-sum early-cycle expenses (mirrors real-world Wallet import).
     // Used to verify the forecast does NOT explode from per-category extrapolation.
     return [
-      { name: "Casa", expected: 800, isFixed: true },
-      { name: "Mutuo", expected: 530, isFixed: true },
-      { name: "Assicurazione", expected: 212, isFixed: true },
-      { name: "Leasing", expected: 487, isFixed: true },
-      { name: "Abbonamento", expected: 118.75, isFixed: true },
-      { name: "Spesa alimentare", expected: 50, isFixed: false },
-      { name: "Carburante", expected: 20, isFixed: false },
-      { name: "Trasporti", expected: 47.3, isFixed: false },
-      { name: "Svago", expected: 70, isFixed: false },
-      { name: "Salute", expected: 200, isFixed: false },
-      { name: "Risparmi", expected: 1000, isFixed: false },
-      { name: "Vacanze", expected: 372, isFixed: false },
-      { name: "Regali", expected: 20, isFixed: false },
+      { name: "Casa", expected: 800 },
+      { name: "Mutuo", expected: 530 },
+      { name: "Assicurazione", expected: 212 },
+      { name: "Leasing", expected: 487 },
+      { name: "Abbonamento", expected: 118.75 },
+      { name: "Spesa alimentare", expected: 50 },
+      { name: "Carburante", expected: 20 },
+      { name: "Trasporti", expected: 47.3 },
+      { name: "Svago", expected: 70 },
+      { name: "Salute", expected: 200 },
+      { name: "Risparmi", expected: 1000 },
+      { name: "Vacanze", expected: 372 },
+      { name: "Regali", expected: 20 },
     ];
   }
   const cats: CatSpec[] = [
-    { name: "Casa", expected: ageIndex < 6 ? 700 : ageIndex < 12 ? 800 : 850, isFixed: true },
-    { name: "Spesa", expected: 400, isFixed: false },
-    { name: "Carburante", expected: 100, isFixed: false },
-    { name: "Bollette", expected: 120, isFixed: true },
+    { name: "Casa", expected: ageIndex < 6 ? 700 : ageIndex < 12 ? 800 : 850 },
+    { name: "Spesa", expected: 400 },
+    { name: "Carburante", expected: 100 },
+    { name: "Bollette", expected: 120 },
   ];
-  if (spec.month === 7 || spec.month === 8) cats.push({ name: "Vacanze", expected: 800, isFixed: false });
-  if (spec.month === 12) cats.push({ name: "Regali", expected: 200, isFixed: false });
+  if (spec.month === 7 || spec.month === 8) cats.push({ name: "Vacanze", expected: 800 });
+  if (spec.month === 12) cats.push({ name: "Regali", expected: 200 });
   return cats;
 }
 
@@ -134,7 +143,7 @@ function expensesForPastCycle(cat: CatSpec, ageIndex: number): ExpenseSeed[] {
   const seed = (ageIndex + 1) * 7919;
   const noise = ((seed % 100) - 50) / 100; // -0.5 .. +0.5
 
-  if (cat.isFixed) {
+  if (LUMP_SUM_NAMES.has(cat.name)) {
     return [{ amount: cat.expected, day: 1 }];
   }
   if (cat.name === "Spesa") {
@@ -166,7 +175,7 @@ function expensesForPastCycle(cat: CatSpec, ageIndex: number): ExpenseSeed[] {
 function expensesForCurrentCycle(cat: CatSpec): ExpenseSeed[] {
   // Lump-sum early-cycle scenario: mirrors a Wallet bulk import on day 1-3 of cycle.
   // Pre-fix bug: per-category extrapolation projected this to ~€35k vs ~€4k budget.
-  if (cat.isFixed) return [{ amount: cat.expected, day: 1 }];
+  if (LUMP_SUM_NAMES.has(cat.name)) return [{ amount: cat.expected, day: 1 }];
   if (cat.name === "Spesa alimentare") return [];
   if (cat.name === "Carburante") return [{ amount: 83.83, day: 2, note: "Benzina" }];
   if (cat.name === "Trasporti") return [];
@@ -199,7 +208,6 @@ async function seedCycle(userId: string, spec: CycleSpec, ageIndex: number): Pro
         cycle_id: cycle.id,
         name: cat.name,
         expected_amount: cat.expected,
-        is_fixed: cat.isFixed,
       })
       .select("id")
       .single();

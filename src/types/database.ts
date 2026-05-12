@@ -40,7 +40,6 @@ export type Database = {
           cycle_id: string
           expected_amount: number
           id: string
-          is_fixed: boolean
           name: string
           sort_order: number
         }
@@ -49,7 +48,6 @@ export type Database = {
           cycle_id: string
           expected_amount?: number
           id?: string
-          is_fixed?: boolean
           name: string
           sort_order?: number
         }
@@ -58,7 +56,6 @@ export type Database = {
           cycle_id?: string
           expected_amount?: number
           id?: string
-          is_fixed?: boolean
           name?: string
           sort_order?: number
         }
