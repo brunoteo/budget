@@ -106,3 +106,24 @@ export async function getSearchResults(f: Filters): Promise<SearchResult> {
   const supabase = await getServerSupabase();
   return getSearchResultsWithClient(supabase, f);
 }
+
+export type CategoryOption = { id: string; name: string };
+
+export async function getAllCategoryOptions(): Promise<CategoryOption[]> {
+  const supabase = await getServerSupabase();
+  const { data } = await supabase
+    .from("categories")
+    .select("id, name")
+    .order("name", { ascending: true });
+  if (!data) return [];
+  // dedupe by lowercase name, keep first occurrence
+  const seen = new Set<string>();
+  const out: CategoryOption[] = [];
+  for (const c of data) {
+    const key = c.name.trim().toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    out.push({ id: c.id, name: c.name });
+  }
+  return out;
+}
