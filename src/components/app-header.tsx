@@ -8,6 +8,7 @@ import {
   List,
   LogOut,
   MoreVertical,
+  Search,
   Settings,
   Upload,
 } from "lucide-react";
@@ -133,6 +134,10 @@ function ActionsMenu({ cycleStart, isCurrentCycle }: { cycleStart: string; isCur
         sideOffset={8}
         className="w-52 p-1"
       >
+        <DropdownMenuItem className={menuItem} render={<Link href="/search" />}>
+          <Search className="h-4 w-4" strokeWidth={1.5} aria-hidden />
+          {copy.search.headerLink}
+        </DropdownMenuItem>
         <DropdownMenuItem className={menuItem} render={<Link href={categoriesHref} />}>
           <List className="h-4 w-4" strokeWidth={1.5} aria-hidden />
           {copy.header.categories}

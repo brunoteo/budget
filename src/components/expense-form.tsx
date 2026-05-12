@@ -19,8 +19,8 @@ type Expense = {
 };
 
 type Props =
-  | { mode: "create"; categories: Cat[]; defaultDate: string }
-  | { mode: "edit"; categories: Cat[]; expense: Expense };
+  | { mode: "create"; categories: Cat[]; defaultDate: string; returnTo?: string }
+  | { mode: "edit"; categories: Cat[]; expense: Expense; returnTo?: string };
 
 const fieldShellClass =
   "h-11 w-full rounded-md border border-input bg-surface px-3 text-base text-text-primary outline-none transition-colors focus-visible:border-accent focus-visible:ring-2 focus-visible:ring-accent/30 aria-invalid:border-destructive aria-invalid:ring-2 aria-invalid:ring-destructive/25";
@@ -54,6 +54,7 @@ export function ExpenseForm(props: Props) {
       className="space-y-5 rounded-lg border border-border bg-surface p-5 shadow-sm"
     >
       {props.mode === "edit" && <input type="hidden" name="id" value={props.expense.id} />}
+      {props.returnTo && <input type="hidden" name="return" value={props.returnTo} />}
 
       <div className="space-y-2">
         <label htmlFor="amount" className="block text-sm font-medium text-text-primary">
@@ -158,7 +159,7 @@ export function ExpenseForm(props: Props) {
 
       <div className="flex gap-3 pt-1">
         <Link
-          href="/"
+          href={props.returnTo ?? "/"}
           className="flex h-12 flex-1 items-center justify-center rounded-md border border-border bg-surface text-base font-medium text-text-primary transition-colors hover:bg-clay-200"
         >
           {c.cancel}
