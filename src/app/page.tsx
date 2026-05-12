@@ -40,7 +40,6 @@ export default async function DashboardPage({
         categories: data.categories.map((c) => ({
           id: c.id,
           expectedAmount: c.expectedAmount,
-          isFixed: c.isFixed,
         })),
         expenses: data.expenses.map((e) => ({
           categoryId: e.categoryId,
@@ -109,7 +108,6 @@ export default async function DashboardPage({
                 name={cat.name}
                 expected={cat.expectedAmount}
                 actual={k.actual}
-                isFixed={cat.isFixed}
                 overBudget={k.overBudget}
                 transactions={txs}
               />

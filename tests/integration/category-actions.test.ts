@@ -25,10 +25,10 @@ describe("category actions", () => {
   });
 
   it("creates and lists a category", async () => {
-    await userClient.from("categories").insert({ cycle_id: cycleId, name: "Mutuo", expected_amount: 530, is_fixed: true });
+    await userClient.from("categories").insert({ cycle_id: cycleId, name: "Mutuo", expected_amount: 530 });
     const { data } = await userClient.from("categories").select("*").eq("cycle_id", cycleId);
     expect(data).toHaveLength(1);
-    expect(data![0]!.is_fixed).toBe(true);
+    expect(data![0]!.name).toBe("Mutuo");
   });
 
   it("blocks delete when an expense references the category", async () => {
@@ -54,11 +54,11 @@ describe("category carry-forward", () => {
     const { data: prev } = await a.from("cycles").insert({ user_id: id, start_date: "2026-03-27", end_date: "2026-04-26" }).select("*").single();
     const { data: target } = await a.from("cycles").insert({ user_id: id, start_date: "2026-04-27", end_date: "2026-05-26" }).select("*").single();
     await a.from("categories").insert([
-      { cycle_id: prev!.id, name: "Spese casa", expected_amount: 800, is_fixed: false, sort_order: 0 },
-      { cycle_id: prev!.id, name: "Mutuo", expected_amount: 530, is_fixed: true, sort_order: 1 },
+      { cycle_id: prev!.id, name: "Spese casa", expected_amount: 800, sort_order: 0 },
+      { cycle_id: prev!.id, name: "Mutuo", expected_amount: 530, sort_order: 1 },
     ]);
 
-    const { data: prevCats } = await a.from("categories").select("name, expected_amount, is_fixed, sort_order").eq("cycle_id", prev!.id).order("sort_order");
+    const { data: prevCats } = await a.from("categories").select("name, expected_amount, sort_order").eq("cycle_id", prev!.id).order("sort_order");
     const rows = prevCats!.map((c) => ({ ...c, cycle_id: target!.id }));
     const { error } = await client.from("categories").insert(rows);
     expect(error).toBeNull();
@@ -66,7 +66,7 @@ describe("category carry-forward", () => {
     const { data: copied } = await client.from("categories").select("*").eq("cycle_id", target!.id).order("sort_order");
     expect(copied).toHaveLength(2);
     expect(copied![0]!.name).toBe("Spese casa");
-    expect(copied![1]!.is_fixed).toBe(true);
+    expect(copied![1]!.name).toBe("Mutuo");
     await deleteTestUsers([FWD_EMAIL]);
   });
 });

@@ -17,3 +17,5 @@ supabase/.branches
 supabase/.temp
 .idea
 *.tsbuildinfo
+backups/*
+!backups/.gitkeep

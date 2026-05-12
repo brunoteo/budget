@@ -7,13 +7,13 @@ import { initialResult } from "@/server/actions/result";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-type Field = "cycleId" | "name" | "expectedAmount" | "isFixed" | "id";
+type Field = "cycleId" | "name" | "expectedAmount" | "id";
 
 export function CategoryEditForm({
   defaults,
   cycleSlug,
 }: {
-  defaults: { id: string; name: string; expectedAmount: number; isFixed: boolean };
+  defaults: { id: string; name: string; expectedAmount: number };
   cycleSlug?: string;
 }) {
   const c = copy.categories;
@@ -61,15 +61,6 @@ export function CategoryEditForm({
           {fieldErr("expectedAmount")}
         </span>
       )}
-      <label className="flex items-center gap-2 text-sm text-text-primary">
-        <input
-          type="checkbox"
-          name="isFixed"
-          defaultChecked={defaults.isFixed}
-          className="h-4 w-4 rounded border-border accent-accent"
-        />{" "}
-        {c.fixedLabel}
-      </label>
       {!state.ok && state.formError && (
         <p className="text-sm text-destructive" aria-live="polite">{state.formError}</p>
       )}

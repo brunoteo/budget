@@ -11,7 +11,7 @@ export type ExpenseForEdit = {
     note: string | null;
     cycleId: string;
   };
-  categories: { id: string; name: string; isFixed: boolean }[];
+  categories: { id: string; name: string }[];
 };
 
 export async function getExpenseForEdit(id: string): Promise<ExpenseForEdit | null> {
@@ -24,7 +24,7 @@ export async function getExpenseForEdit(id: string): Promise<ExpenseForEdit | nu
   if (!row) return null;
   const { data: cats } = await supabase
     .from("categories")
-    .select("id, name, is_fixed")
+    .select("id, name")
     .eq("cycle_id", row.cycle_id)
     .order("sort_order");
   return {
@@ -36,6 +36,6 @@ export async function getExpenseForEdit(id: string): Promise<ExpenseForEdit | nu
       note: row.note,
       cycleId: row.cycle_id,
     },
-    categories: sortCategoriesByName((cats ?? []).map((c) => ({ id: c.id, name: c.name, isFixed: c.is_fixed }))),
+    categories: sortCategoriesByName((cats ?? []).map((c) => ({ id: c.id, name: c.name }))),
   };
 }

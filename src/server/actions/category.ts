@@ -25,12 +25,11 @@ const CreateSchema = z.object({
   cycleId: z.string().uuid(),
   name: z.string().min(1).max(80),
   expectedAmount: z.coerce.number().nonnegative(),
-  isFixed: z.coerce.boolean().optional().default(false),
 });
 
 const UpdateSchema = CreateSchema.partial().extend({ id: z.string().uuid() });
 
-type CategoryFields = "cycleId" | "name" | "expectedAmount" | "isFixed";
+type CategoryFields = "cycleId" | "name" | "expectedAmount";
 
 export async function createCategoryAction(
   _prev: ActionResult<CategoryFields>,
@@ -45,7 +44,6 @@ export async function createCategoryAction(
       cycle_id: parsed.data.cycleId,
       name: parsed.data.name,
       expected_amount: parsed.data.expectedAmount,
-      is_fixed: parsed.data.isFixed ?? false,
     });
     if (error) return { ok: false, fieldErrors: {}, formError: error.message };
   } catch {
@@ -68,7 +66,6 @@ export async function updateCategoryAction(
     const { error } = await supabase.from("categories").update({
       ...(rest.name !== undefined && { name: rest.name }),
       ...(rest.expectedAmount !== undefined && { expected_amount: rest.expectedAmount }),
-      ...(rest.isFixed !== undefined && { is_fixed: rest.isFixed }),
     }).eq("id", id);
     if (error) return { ok: false, fieldErrors: {}, formError: error.message };
   } catch {
@@ -109,7 +106,7 @@ export async function carryForwardCategoriesAction(formData: FormData) {
 
   const { data: prevCats } = await supabase
     .from("categories")
-    .select("name, expected_amount, is_fixed, sort_order")
+    .select("name, expected_amount, sort_order")
     .eq("cycle_id", previous.id)
     .order("sort_order");
   if (!prevCats || prevCats.length === 0) return { error: copy.errors.previousCycleEmpty };
