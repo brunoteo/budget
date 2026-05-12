@@ -13,5 +13,10 @@ export default defineConfig({
     coverage: { reporter: ["text", "html"], include: ["src/**/*.ts"] },
     testTimeout: 15000,
   },
-  resolve: { alias: { "@": path.resolve(__dirname, "./src") } },
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+      "server-only": path.resolve(__dirname, "tests/stubs/server-only.ts"),
+    },
+  },
 });
