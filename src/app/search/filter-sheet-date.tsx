@@ -45,8 +45,8 @@ export function FilterSheetDate({ from, to, basePath, searchParams }: Props) {
   const isDefault =
     from === shiftDays(today, -30) && to === today;
   const chipClass = isDefault
-    ? "rounded-full border border-border px-3 py-1 text-xs text-text-muted"
-    : "rounded-full border border-accent px-3 py-1 text-xs text-accent";
+    ? "inline-flex items-center rounded-full bg-clay-200 px-3 py-1.5 text-xs font-medium text-clay-800 hover:bg-clay-300"
+    : "inline-flex items-center rounded-full bg-accent px-3 py-1.5 text-xs font-medium text-accent-foreground hover:bg-accent-hover";
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -59,13 +59,13 @@ export function FilterSheetDate({ from, to, basePath, searchParams }: Props) {
         </SheetHeader>
         <div className="space-y-4 px-4 pb-2">
           <div className="grid grid-cols-3 gap-2">
-            <Button variant="outline" size="sm" onClick={() => apply(shiftDays(today, -30), today)}>
+            <Button variant="secondary" size="sm" onClick={() => apply(shiftDays(today, -30), today)}>
               {copy.search.rangePresetLast30}
             </Button>
-            <Button variant="outline" size="sm" onClick={() => apply(shiftDays(today, -60), today)}>
+            <Button variant="secondary" size="sm" onClick={() => apply(shiftDays(today, -60), today)}>
               {copy.search.rangePresetLast60}
             </Button>
-            <Button variant="outline" size="sm" onClick={() => apply(shiftDays(today, -90), today)}>
+            <Button variant="secondary" size="sm" onClick={() => apply(shiftDays(today, -90), today)}>
               {copy.search.rangePresetLast90}
             </Button>
           </div>
