@@ -8,7 +8,7 @@ import { sortCategoriesByName } from "@/lib/category/sort";
 export type DashboardData = {
   profile: { id: string; displayName: string; cycleStartDay: number; defaultSalary: number | null };
   cycle: { id: string; range: CycleRange; salary: number | null; extraIncome: { label: string; amount: number }[] };
-  categories: { id: string; name: string; expectedAmount: number; isFixed: boolean; sortOrder: number }[];
+  categories: { id: string; name: string; expectedAmount: number; sortOrder: number }[];
   expenses: { id: string; categoryId: string; amount: number; occurredOn: string; note: string | null }[];
   kpi: Kpi;
 };
@@ -48,7 +48,6 @@ export async function getDashboardForToday(today: string, cycleStartOverride?: s
       id: c.id,
       name: c.name,
       expectedAmount: Number(c.expected_amount),
-      isFixed: c.is_fixed,
       sortOrder: c.sort_order,
     })),
   );
