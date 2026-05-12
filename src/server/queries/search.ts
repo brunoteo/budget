@@ -41,6 +41,25 @@ export async function getSearchResultsWithClient(
     "id, amount, occurred_on, note, category_id, cycle_id, " +
     "cycles!inner(start_date, end_date), categories!inner(name)";
 
+  // When `q` is set, search matches either expense.note OR category name.
+  // PostgREST `or()` is single-table only, so resolve matching category ids
+  // first (RLS-scoped) and then OR them with the note ilike on expenses.
+  let qOr: string | null = null;
+  if (f.q) {
+    const pat = `%${escapeIlike(f.q)}%`;
+    const { data: matchedCats, error: catErr } = await supabase
+      .from("categories")
+      .select("id")
+      .ilike("name", pat);
+    if (catErr) throw catErr;
+    const catIds = (matchedCats ?? []).map((c) => c.id as string);
+    const orParts = [`note.ilike.${pat}`];
+    if (catIds.length) {
+      orParts.push(`category_id.in.(${catIds.join(",")})`);
+    }
+    qOr = orParts.join(",");
+  }
+
   let q = supabase
     .from("expenses")
     .select(select, { count: "exact" })
@@ -50,10 +69,7 @@ export async function getSearchResultsWithClient(
   if (f.min != null) q = q.gte("amount", f.min);
   if (f.max != null) q = q.lte("amount", f.max);
   if (f.categoryIds.length) q = q.in("category_id", f.categoryIds);
-  if (f.q) {
-    const pat = `%${escapeIlike(f.q)}%`;
-    q = q.ilike("note", pat);
-  }
+  if (qOr) q = q.or(qOr);
 
   const { data, count, error } = await q
     .order("occurred_on", { ascending: false })
@@ -71,10 +87,7 @@ export async function getSearchResultsWithClient(
   if (f.min != null) sumQ = sumQ.gte("amount", f.min);
   if (f.max != null) sumQ = sumQ.lte("amount", f.max);
   if (f.categoryIds.length) sumQ = sumQ.in("category_id", f.categoryIds);
-  if (f.q) {
-    const pat = `%${escapeIlike(f.q)}%`;
-    sumQ = sumQ.ilike("note", pat);
-  }
+  if (qOr) sumQ = sumQ.or(qOr);
   const { data: sumRows, error: sumErr } = await sumQ;
   if (sumErr) throw sumErr;
   const totalAmount = (sumRows ?? []).reduce(
