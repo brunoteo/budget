@@ -41,8 +41,8 @@ export function FilterSheetCategory({ selected, options, basePath, searchParams 
 
   const isDefault = selected.length === 0;
   const chipClass = isDefault
-    ? "rounded-full border border-border px-3 py-1 text-xs text-text-muted"
-    : "rounded-full border border-accent px-3 py-1 text-xs text-accent";
+    ? "inline-flex items-center rounded-full bg-clay-200 px-3 py-1.5 text-xs font-medium text-clay-800 hover:bg-clay-300"
+    : "inline-flex items-center rounded-full bg-accent px-3 py-1.5 text-xs font-medium text-accent-foreground hover:bg-accent-hover";
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
