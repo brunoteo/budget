@@ -90,21 +90,13 @@ export default async function CategoriesPage({
                   id: cat.id,
                   name: cat.name,
                   expectedAmount: cat.expectedAmount,
-                  isFixed: cat.isFixed,
                 }}
                 cycleSlug={cycleParam}
               />
             ) : (
               <div className="rounded-lg border border-border bg-surface p-4 shadow-sm">
                 <div className="flex items-center justify-between gap-2">
-                  <strong className="text-text-primary">
-                    {cat.name}
-                    {cat.isFixed && (
-                      <span className="ml-2 rounded-sm bg-clay-200 px-1.5 py-0.5 text-[0.65rem] uppercase tracking-wide text-clay-700">
-                        {c.fixedBadge}
-                      </span>
-                    )}
-                  </strong>
+                  <strong className="text-text-primary">{cat.name}</strong>
                   <span className="font-mono tabular-nums text-clay-700">{formatEur(cat.expectedAmount)}</span>
                 </div>
                 <div className="mt-2 flex items-center justify-end gap-4">

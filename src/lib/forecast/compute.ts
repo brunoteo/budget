@@ -3,7 +3,6 @@ import type { CycleRange } from "@/lib/cycle/compute";
 export type ForecastCategory = {
   id: string;
   expectedAmount: number;
-  isFixed: boolean;
 };
 
 export type ForecastExpense = {
@@ -68,7 +67,6 @@ export function computeForecast(input: ForecastInput): Forecast {
   );
 
   const perCategory: CategoryForecast[] = input.categories.map((c) => {
-    if (c.isFixed) return { id: c.id, projected: c.expectedAmount };
     const exps = expensesByCategory.get(c.id) ?? [];
     if (exps.length === 0) return { id: c.id, projected: c.expectedAmount };
     const actual = exps.reduce((s, e) => s + e.amount, 0);
