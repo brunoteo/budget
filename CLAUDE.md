@@ -24,6 +24,7 @@ src/
     /import               # Wallet CSV import flow
     /settings/mappings    # persisted Wallet → app category mappings
     /trends               # cycle trends, top movers, sparklines, year rollup
+    /search               # cross-cycle transaction search and filters
   components/
     ui/                   # shadcn-derived primitives
   lib/
@@ -33,6 +34,7 @@ src/
     category/             # PURE: category sorting (Italian-aware, case-insensitive)
     cycle/                # PURE: cycle date math (no Next, no Supabase)
     import/               # PURE: CSV parse, filter, fingerprint, name-fold for Wallet import
+    search/               # PURE: filter parse/serialize, group-by-cycle for /search
     kpi/                  # PURE: KPI computation
     forecast/             # PURE: end-of-cycle spending projection (Plan 5)
     trends/               # PURE: cycle aggregation, top movers, year rollup, sparkline series (Plan 5)
