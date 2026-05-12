@@ -3,8 +3,9 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Tag } from "lucide-react";
 import { copy } from "@/lib/copy";
+import { Check } from "lucide-react";
 import {
-  Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger,
+  Sheet, SheetContent, SheetFooter, SheetHeader, SheetTitle, SheetTrigger,
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 
@@ -48,11 +49,11 @@ export function FilterSheetCategory({ selected, options, basePath, searchParams 
       <SheetTrigger className={chipClass}>
         <Tag className="mr-1 inline h-3 w-3" aria-hidden /> {copy.search.chipCategory}
       </SheetTrigger>
-      <SheetContent side="bottom" className="max-h-[80vh] space-y-3 overflow-y-auto">
+      <SheetContent side="bottom" className="max-h-[85vh]">
         <SheetHeader>
           <SheetTitle>{copy.search.chipCategory}</SheetTitle>
         </SheetHeader>
-        <ul className="divide-y divide-border-muted">
+        <ul className="flex-1 divide-y divide-border-muted overflow-y-auto px-4">
           {options.map((c) => {
             const checked = local.includes(c.id);
             return (
@@ -60,18 +61,18 @@ export function FilterSheetCategory({ selected, options, basePath, searchParams 
                 <button
                   type="button"
                   onClick={() => toggle(c.id)}
-                  className="flex h-12 w-full items-center justify-between px-2 text-left text-sm"
+                  className="flex h-12 w-full items-center justify-between gap-3 text-left text-sm"
                 >
-                  <span>{c.name}</span>
-                  <span aria-hidden>{checked ? "✓" : ""}</span>
+                  <span className="truncate">{c.name}</span>
+                  {checked && <Check className="h-4 w-4 shrink-0 text-accent" strokeWidth={2} aria-hidden />}
                 </button>
               </li>
             );
           })}
         </ul>
-        <div className="pt-2">
+        <SheetFooter>
           <Button onClick={apply} className="w-full">{copy.search.applyButton}</Button>
-        </div>
+        </SheetFooter>
       </SheetContent>
     </Sheet>
   );
