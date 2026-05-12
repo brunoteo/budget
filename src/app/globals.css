@@ -149,7 +149,7 @@
 
   /* ─── Budget: Text ─── */
   --text-primary: oklch(0.187 0.038 45);       /* clay-900 */
-  --text-muted: oklch(0.648 0.052 60);         /* clay-500 */
+  --text-muted: oklch(0.524 0.056 60);         /* clay-600 — AA compliant on clay-100 bg */
   --text-inverse: oklch(0.974 0.010 60);       /* clay-50 */
 
   /* ─── Budget: Borders ─── */
@@ -189,7 +189,7 @@
   --secondary: oklch(0.924 0.022 60);          /* clay-200 */
   --secondary-foreground: oklch(0.187 0.038 45);
   --muted: oklch(0.924 0.022 60);              /* clay-200 */
-  --muted-foreground: oklch(0.648 0.052 60);   /* clay-500 */
+  --muted-foreground: oklch(0.524 0.056 60);   /* clay-600 — AA compliant */
   --border: oklch(0.866 0.032 60);             /* clay-300 */
   --input: oklch(0.866 0.032 60);              /* clay-300 */
   --ring: oklch(0.581 0.133 38);               /* terra-500 — focus ring */
