@@ -9,10 +9,17 @@ export const dynamic = "force-dynamic";
 
 export default async function EditExpensePage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ return?: string }>;
 }) {
   const { id } = await params;
+  const { return: returnRaw } = await searchParams;
+  const returnTo =
+    typeof returnRaw === "string" && returnRaw.startsWith("/") && !returnRaw.startsWith("//")
+      ? returnRaw
+      : undefined;
   const data = await getExpenseForEdit(id);
   if (!data) notFound();
 
@@ -22,8 +29,8 @@ export default async function EditExpensePage({
         <BackLink label={copy.header.back} />
         <h1 className="font-display text-2xl text-text-primary">{copy.expense.editTitle}</h1>
       </div>
-      <ExpenseForm mode="edit" categories={data.categories} expense={data.expense} />
-      <DeleteExpenseButton id={data.expense.id} />
+      <ExpenseForm mode="edit" categories={data.categories} expense={data.expense} returnTo={returnTo} />
+      <DeleteExpenseButton id={data.expense.id} returnTo={returnTo} />
     </main>
   );
 }
