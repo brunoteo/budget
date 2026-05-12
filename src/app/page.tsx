@@ -1,5 +1,5 @@
 import { getDashboardForToday } from "@/server/queries/dashboard";
-import { KpiCard } from "@/components/kpi-card";
+import { KpiHero, KpiStat } from "@/components/kpi-card";
 import { PacingBar } from "@/components/pacing-bar";
 import { CategoryRow } from "@/components/category-row";
 import { AppHeader } from "@/components/app-header";
@@ -12,6 +12,9 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
+
+const revealBase =
+  "animate-in fade-in slide-in-from-bottom-2 duration-500 fill-mode-both";
 
 export default async function DashboardPage({
   searchParams,
@@ -49,6 +52,12 @@ export default async function DashboardPage({
 
   const pct = (n: number) => `${(n * 100).toFixed(1)}%`;
   const c = copy.dashboard;
+  const heroTone: "neutral" | "under" | "over" =
+    data.kpi.paceDelta > 0
+      ? "over"
+      : data.kpi.paceDelta < 0
+      ? "under"
+      : "neutral";
 
   return (
     <>
@@ -59,20 +68,34 @@ export default async function DashboardPage({
         nextCycleStart={nextStart}
         isCurrentCycle={isCurrentCycle}
       />
-      <main className="mx-auto max-w-3xl space-y-3 p-4 pb-24">
-        <section className="grid grid-cols-2 gap-2 md:grid-cols-4">
-          <KpiCard label={c.salary} primary={data.cycle.salary ?? 0} />
-          <KpiCard label={c.percentSalary} primary={pct(data.kpi.percentOfSalarySpent)} />
-          <KpiCard label={c.spent} primary={data.kpi.totalSpent} secondary={c.onBudget(formatEur(data.kpi.totalBudget))} />
-          <KpiCard label={c.remaining} primary={data.kpi.totalRemaining} secondary={c.consumed(pct(data.kpi.percentConsumed))} />
+      <main className="mx-auto max-w-3xl space-y-4 p-4 pb-24">
+        <section className={`${revealBase}`}>
+          <KpiHero
+            label={c.remaining}
+            value={data.kpi.totalRemaining}
+            tone={heroTone}
+            secondary={c.consumed(pct(data.kpi.percentConsumed))}
+          />
         </section>
-        <PacingBar
-          percentConsumed={data.kpi.percentConsumed}
-          cycleProgress={data.kpi.cycleProgress}
-          paceDelta={data.kpi.paceDelta}
-          forecast={forecast}
-        />
-        <section className="space-y-2">
+
+        <section
+          className={`grid grid-cols-3 divide-x divide-border-muted rounded-lg border border-border bg-surface shadow-sm ${revealBase} [animation-delay:80ms]`}
+        >
+          <KpiStat label={c.salary} value={formatEur(data.cycle.salary ?? 0)} />
+          <KpiStat label={c.spent} value={formatEur(data.kpi.totalSpent)} />
+          <KpiStat label={c.percentSalary} value={pct(data.kpi.percentOfSalarySpent)} />
+        </section>
+
+        <div className={`${revealBase} [animation-delay:160ms]`}>
+          <PacingBar
+            percentConsumed={data.kpi.percentConsumed}
+            cycleProgress={data.kpi.cycleProgress}
+            paceDelta={data.kpi.paceDelta}
+            forecast={forecast}
+          />
+        </div>
+
+        <section className={`space-y-2 ${revealBase} [animation-delay:240ms]`}>
           <h2 className="px-1 text-xs uppercase tracking-wider text-text-muted">
             {copy.dashboard.categoriesHeading} · {data.categories.length}
           </h2>
