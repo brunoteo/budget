@@ -8,21 +8,24 @@ function Sparkline({ values }: { values: number[] }) {
   if (values.length === 0) return null;
   const max = Math.max(...values, 1);
   const stepX = values.length > 1 ? W / (values.length - 1) : 0;
-  const points = values
-    .map((v, i) => {
-      const x = i * stepX;
-      const y = H - (v / max) * (H - 2) - 1;
-      return `${x.toFixed(2)},${y.toFixed(2)}`;
-    })
-    .join(" ");
+  const coords = values.map((v, i) => {
+    const x = i * stepX;
+    const y = H - (v / max) * (H - 2) - 1;
+    return { x, y };
+  });
+  const linePoints = coords.map((p) => `${p.x.toFixed(2)},${p.y.toFixed(2)}`).join(" ");
+  const last = coords[coords.length - 1]!;
+  const first = coords[0]!;
+  const areaPoints = `${first.x.toFixed(2)},${H} ${linePoints} ${last.x.toFixed(2)},${H}`;
   return (
     <svg
       viewBox={`0 0 ${W} ${H}`}
       preserveAspectRatio="none"
-      className="h-5 w-full"
+      className="h-5 w-full text-accent"
       aria-hidden
     >
-      <polyline points={points} fill="none" stroke="oklch(0.581 0.133 38)" strokeWidth="1.2" />
+      <polygon points={areaPoints} fill="currentColor" fillOpacity="0.08" />
+      <polyline points={linePoints} fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round" strokeLinecap="round" />
     </svg>
   );
 }

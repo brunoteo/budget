@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useState } from "react";
+import { ChevronRight, ChevronUp } from "lucide-react";
 import { formatEur } from "@/lib/format/eur";
 import { formatDate } from "@/lib/format/date";
 import { copy } from "@/lib/copy";
@@ -61,7 +62,13 @@ export function CategoryRow({ name, expected, actual, isFixed, overBudget, trans
             <div className={`${fillClass} h-full rounded-full transition-[width] duration-200`} style={{ width: `${fillPct}%` }} />
           </div>
         </div>
-        <span className="text-clay-400">{open ? "⌃" : "›"}</span>
+        <span className="text-clay-400" aria-hidden>
+          {open ? (
+            <ChevronUp className="h-4 w-4" strokeWidth={1.5} />
+          ) : (
+            <ChevronRight className="h-4 w-4" strokeWidth={1.5} />
+          )}
+        </span>
       </button>
       {open && (
         <div className="border-t border-border-muted bg-clay-50 p-2 text-sm">
@@ -81,7 +88,7 @@ export function CategoryRow({ name, expected, actual, isFixed, overBudget, trans
                     </span>
                     <span className="flex items-center gap-2">
                       <span className="font-mono tabular-nums">− {formatEur(t.amount)}</span>
-                      <span className="text-clay-400" aria-hidden>›</span>
+                      <ChevronRight className="h-4 w-4 text-clay-400" strokeWidth={1.5} aria-hidden />
                     </span>
                   </Link>
                 </li>
