@@ -6,7 +6,7 @@ const FIXTURE = path.resolve(__dirname, "../fixtures/wallet/sample.csv");
 test.use({ viewport: { width: 375, height: 812 } });
 test.setTimeout(90_000);
 
-test("wallet csv import: upload → resolve → commit → undo", async ({ page }) => {
+test("wallet csv import: upload → resolve → commit → banner", async ({ page }) => {
   const email = `e2e-import+${Date.now()}@test.local`;
 
   // 1. Signup with cycleStartDay=20 so the current cycle (Apr 20 → May 19) contains
