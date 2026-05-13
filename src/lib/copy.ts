@@ -143,6 +143,16 @@ export const copy = {
     statusDaAssegnare: "Da assegnare",
     errorCategoryMissing: (cat: string, cycle: string) =>
       `Categoria "${cat}" non esiste nel ciclo ${cycle}. Crea la categoria o aggiorna la mappatura.`,
+    lastImport: {
+      transactionLabel: "Ultima transazione importata",
+      uploadLabel: "Ultimo upload",
+      exportHint: "Esporta da Wallet dal",
+      exportHintSuffix: "in poi",
+      emptyState: "Nessun import precedente. Esporta tutto lo storico da Wallet.",
+      today: "oggi",
+      yesterday: "ieri",
+      daysAgo: (n: number) => `${n} giorni fa`,
+    },
   },
   mappings: {
     title: "Mappature Wallet",

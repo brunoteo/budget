@@ -6,15 +6,16 @@ const FIXTURE = path.resolve(__dirname, "../fixtures/wallet/sample.csv");
 test.use({ viewport: { width: 375, height: 812 } });
 test.setTimeout(90_000);
 
-test("wallet csv import: upload → resolve → commit → undo", async ({ page }) => {
+test("wallet csv import: upload → resolve → commit → banner", async ({ page }) => {
   const email = `e2e-import+${Date.now()}@test.local`;
 
-  // 1. Signup with cycleStartDay=1 so all April fixture rows fall in one cycle (April 1 → April 30).
+  // 1. Signup with cycleStartDay=20 so the current cycle (Apr 20 → May 19) contains
+  //    both today (May 2026) and the April-dated fixture rows in a single window.
   await page.goto("/signup");
   await page.fill("[name=displayName]", "Tester");
   await page.fill("[name=email]", email);
   await page.fill("[name=password]", "Password!1");
-  await page.fill("[name=cycleStartDay]", "1");
+  await page.fill("[name=cycleStartDay]", "20");
   await page.click("button[type=submit]");
   await expect(page).toHaveURL("/");
 
@@ -27,6 +28,8 @@ test("wallet csv import: upload → resolve → commit → undo", async ({ page 
 
   // 3. Visit /import.
   await page.goto("/import");
+  // 3a. Empty state of the last-import banner is visible on first visit.
+  await expect(page.getByText("Nessun import precedente. Esporta tutto lo storico da Wallet.")).toBeVisible();
   await expect(page.getByRole("heading", { name: "Importa da Wallet" })).toBeVisible();
 
   // 4. Upload the fixture (input is hidden but reachable via setInputFiles).
@@ -67,7 +70,8 @@ test("wallet csv import: upload → resolve → commit → undo", async ({ page 
   // 9. Success.
   await expect(page.getByRole("heading", { name: "Spese annotate" })).toBeVisible({ timeout: 5000 });
 
-  // 10. Undo.
-  await page.getByRole("button", { name: "Annulla importazione" }).click();
-  await expect(page.getByRole("heading", { name: "Importazione annullata" })).toBeVisible({ timeout: 5000 });
+  // 10. After committing the import, banner shows the latest imported date.
+  await page.goto("/import");
+  await expect(page.getByText(/Ultima transazione importata:/)).toBeVisible();
+  await expect(page.getByText(/Esporta da Wallet dal/)).toBeVisible();
 });
