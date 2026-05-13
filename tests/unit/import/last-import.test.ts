@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { daysSince, suggestedStartDate } from "@/lib/import/last-import";
+import { daysSince, formatDaysAgo, suggestedStartDate } from "@/lib/import/last-import";
 
 describe("daysSince", () => {
   it("returns 0 when uploadedAt and now are the same instant", () => {
@@ -47,5 +47,25 @@ describe("suggestedStartDate", () => {
 
   it("rolls over to the next year at December 31", () => {
     expect(suggestedStartDate("2026-12-31")).toBe("2027-01-01");
+  });
+});
+
+const dayCopy = {
+  today: "oggi",
+  yesterday: "ieri",
+  daysAgo: (n: number) => `${n} giorni fa`,
+};
+
+describe("formatDaysAgo", () => {
+  it("returns 'oggi' for 0", () => {
+    expect(formatDaysAgo(0, dayCopy)).toBe("oggi");
+  });
+
+  it("returns 'ieri' for 1", () => {
+    expect(formatDaysAgo(1, dayCopy)).toBe("ieri");
+  });
+
+  it("returns '7 giorni fa' for 7", () => {
+    expect(formatDaysAgo(7, dayCopy)).toBe("7 giorni fa");
   });
 });

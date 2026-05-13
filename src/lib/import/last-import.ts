@@ -29,3 +29,15 @@ export function suggestedStartDate(lastOccurredOn: string): string {
   const nd = String(next.getUTCDate()).padStart(2, "0");
   return `${ny}-${nm}-${nd}`;
 }
+
+export type DaysAgoCopy = {
+  today: string;
+  yesterday: string;
+  daysAgo: (n: number) => string;
+};
+
+export function formatDaysAgo(days: number, c: DaysAgoCopy): string {
+  if (days <= 0) return c.today;
+  if (days === 1) return c.yesterday;
+  return c.daysAgo(days);
+}
