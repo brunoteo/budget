@@ -28,3 +28,35 @@ export async function getCategoriesForCycles(cycleIds: string[]): Promise<Catego
   if (error) throw error;
   return (data ?? []).map((r) => ({ id: r.id, name: r.name, cycleId: r.cycle_id }));
 }
+
+export type LastImport = {
+  lastOccurredOn: string | null; // ISO YYYY-MM-DD
+  lastUploadedAt: string | null; // ISO timestamp
+};
+
+export async function getLastImport(): Promise<LastImport> {
+  const supabase = await getServerSupabase();
+
+  const occQ = await supabase
+    .from("expenses")
+    .select("occurred_on")
+    .not("import_id", "is", null)
+    .order("occurred_on", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (occQ.error) throw occQ.error;
+
+  const createdQ = await supabase
+    .from("expenses")
+    .select("created_at")
+    .not("import_id", "is", null)
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (createdQ.error) throw createdQ.error;
+
+  return {
+    lastOccurredOn: occQ.data?.occurred_on ?? null,
+    lastUploadedAt: createdQ.data?.created_at ?? null,
+  };
+}
