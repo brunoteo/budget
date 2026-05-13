@@ -9,12 +9,13 @@ test.setTimeout(90_000);
 test("wallet csv import: upload → resolve → commit → undo", async ({ page }) => {
   const email = `e2e-import+${Date.now()}@test.local`;
 
-  // 1. Signup with cycleStartDay=1 so all April fixture rows fall in one cycle (April 1 → April 30).
+  // 1. Signup with cycleStartDay=20 so the current cycle (Apr 20 → May 19) contains
+  //    both today (May 2026) and the April-dated fixture rows in a single window.
   await page.goto("/signup");
   await page.fill("[name=displayName]", "Tester");
   await page.fill("[name=email]", email);
   await page.fill("[name=password]", "Password!1");
-  await page.fill("[name=cycleStartDay]", "1");
+  await page.fill("[name=cycleStartDay]", "20");
   await page.click("button[type=submit]");
   await expect(page).toHaveURL("/");
 
