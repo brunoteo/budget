@@ -18,3 +18,14 @@ export function daysSince(uploadedAt: Date, now: Date): number {
   const b = ymdToUtcMs(toRomeYmd(now));
   return Math.floor((b - a) / 86_400_000);
 }
+
+export function suggestedStartDate(lastOccurredOn: string): string {
+  const [y, m, d] = lastOccurredOn.split("-").map(Number) as [number, number, number];
+  // Anchor at UTC noon to avoid TZ drift, then add 1 day.
+  const next = new Date(Date.UTC(y, m - 1, d, 12));
+  next.setUTCDate(next.getUTCDate() + 1);
+  const ny = next.getUTCFullYear();
+  const nm = String(next.getUTCMonth() + 1).padStart(2, "0");
+  const nd = String(next.getUTCDate()).padStart(2, "0");
+  return `${ny}-${nm}-${nd}`;
+}
