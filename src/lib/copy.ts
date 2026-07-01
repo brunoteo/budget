@@ -35,6 +35,7 @@ export const copy = {
   fab: { addExpense: "Aggiungi spesa" },
   dashboard: {
     salary: "Stipendio",
+    budget: "Budget",
     spent: "Speso",
     remaining: "Rimanente",
     percentSalary: "% stipendio",

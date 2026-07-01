@@ -78,9 +78,10 @@ export default async function DashboardPage({
         </section>
 
         <section
-          className={`grid grid-cols-3 divide-x divide-border-muted rounded-lg border border-border bg-surface shadow-sm ${revealBase} [animation-delay:80ms]`}
+          className={`grid grid-cols-2 divide-x divide-y divide-border-muted rounded-lg border border-border bg-surface shadow-sm ${revealBase} [animation-delay:80ms]`}
         >
           <KpiStat label={c.salary} value={formatEur(data.cycle.salary ?? 0)} />
+          <KpiStat label={c.budget} value={formatEur(data.kpi.totalBudget)} />
           <KpiStat label={c.spent} value={formatEur(data.kpi.totalSpent)} />
           <KpiStat label={c.percentSalary} value={pct(data.kpi.percentOfSalarySpent)} />
         </section>
