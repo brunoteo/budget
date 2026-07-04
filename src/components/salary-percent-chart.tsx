@@ -10,15 +10,8 @@ import {
   YAxis,
 } from "recharts";
 import type { SalaryPercentPoint } from "@/lib/trends/types";
-
-const MONTHS_IT = ["gen", "feb", "mar", "apr", "mag", "giu", "lug", "ago", "set", "ott", "nov", "dic"];
-
-function formatMonthYear(iso: string): string {
-  const [yStr, mStr] = iso.split("-");
-  const m = Number(mStr);
-  if (!yStr || !m || m < 1 || m > 12) return iso;
-  return `${MONTHS_IT[m - 1]} '${yStr.slice(-2)}`;
-}
+import { formatMonthYear } from "@/lib/format/date";
+import { copy } from "@/lib/copy";
 
 export function SalaryPercentChart({ data }: { data: SalaryPercentPoint[] }) {
   const chartData = data.map((p) => ({
@@ -40,6 +33,7 @@ export function SalaryPercentChart({ data }: { data: SalaryPercentPoint[] }) {
             tickLine={false}
           />
           <YAxis
+            domain={[0, (max: number) => Math.max(100, max * 1.1)]}
             tick={{ fontSize: 11 }}
             tickFormatter={(v: number) => `${v}%`}
             axisLine={false}
@@ -55,6 +49,7 @@ export function SalaryPercentChart({ data }: { data: SalaryPercentPoint[] }) {
           <Line
             type="monotone"
             dataKey="percent"
+            name={copy.trends.salaryPercentSeries}
             stroke="oklch(0.581 0.133 38)"
             strokeWidth={2}
             dot={{ r: 3 }}

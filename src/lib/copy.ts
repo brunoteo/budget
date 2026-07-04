@@ -97,6 +97,7 @@ export const copy = {
     notEnoughCycles: "Disponibile dal secondo ciclo",
     budgetSeries: "Budget",
     spentSeries: "Speso",
+    salaryPercentSeries: "% speso",
     groupAnnualTitle: "Quest'anno",
     groupAnnualSubtitle: (n: number) => `Ultimi ${n} cicli`,
     groupMonthlyTitle: "Ultimo ciclo",
