@@ -102,6 +102,8 @@ export const copy = {
     groupMonthlyTitle: "Ultimo ciclo",
     groupMonthlySubtitle: "Confronto con il ciclo precedente",
     totalHeading: "Totale",
+    salaryPercentHeading: "% stipendio speso",
+    salaryPercentNoData: "Nessun dato stipendio disponibile per questo periodo.",
     moversHeading: "Top movimenti",
     perCategoryHeading: "Per categoria",
     rollupHeading: "Riepilogo",
