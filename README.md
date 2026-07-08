@@ -1,8 +1,8 @@
 # Budget
 
-A two-user personal-budget web app for couples with separate paychecks and pay cycles that don't align with the calendar month. Built to replace a manual Google Sheet.
+A personal-budget web app for people with separate paychecks and pay cycles that don't align with the calendar month. Built to replace a manual Google Sheet.
 
-Each spouse gets an isolated account with their own data and their own pay-cycle (e.g. 27th-to-26th, 10th-to-9th). Cycles align to paycheck day, not the 1st of the month — the app's core differentiator. Italian-only UI, mobile-first (built for Android).
+Each user gets an isolated account with their own data and their own pay-cycle (e.g. 27th-to-26th, 10th-to-9th). Cycles align to paycheck day, not the 1st of the month — the app's core differentiator. Italian-only UI, mobile-first (built for Android).
 
 ## Features
 
@@ -65,7 +65,7 @@ See [`CLAUDE.md`](CLAUDE.md) for repository layout, conventions, and data-model 
 
 ## Scope
 
-This is a personal project built for two specific users, not a general-purpose product. No joint-household features, no multi-currency, no bank-API integrations, no native mobile app. See [`docs/ROADMAP.md`](docs/ROADMAP.md#out-of-scope-across-all-plans) for the full out-of-scope list.
+Each account is isolated by RLS — no schema limit on user count, but signup is gated behind `NEXT_PUBLIC_ALLOW_SIGNUP` and accounts are created manually. No joint-household features, no multi-currency, no bank-API integrations, no native mobile app. See [`docs/ROADMAP.md`](docs/ROADMAP.md#out-of-scope-across-all-plans) for the full out-of-scope list.
 
 ## License
 

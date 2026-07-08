@@ -1,6 +1,6 @@
 # Budget — Project Notes for Claude
 
-A two-user personal-budget web application replacing a manual Google Sheet. Each spouse has an isolated account with their own data and their own pay-cycle (e.g., 27th-to-26th, 10th-to-9th). The app's distinguishing feature is paycheck-day-aligned monthly cycles. Italian-only UI. Mobile-first.
+A personal-budget web application replacing a manual Google Sheet. Each user has an isolated account with their own data and their own pay-cycle (e.g., 27th-to-26th, 10th-to-9th). The app's distinguishing feature is paycheck-day-aligned monthly cycles. Italian-only UI. Mobile-first.
 
 **Status:** MVP shipped (Plan 1). Plan 2 (Wallet CSV import) shipped. Plan 3 (PWA + production hardening) shipped. Plan 4 (Supabase production hardening) shipped. Plan 5 (Forecast + trends expansion) shipped.
 
