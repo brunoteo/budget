@@ -9,6 +9,7 @@ export type CycleSummary = {
   totalSpent: number;
   totalBudget: number;
   perCategory: CategoryAtCycle[];
+  salary?: number | null; // absent/null = no salary data for this cycle (renders as a chart gap)
 };
 
 export type CategoryDataPoint = {
@@ -36,4 +37,9 @@ export type YearRollupRow = {
   totalSpent: number;
   averageSpent: number;
   deltaPercent: number | null; // null when prior window has no data for this category
+};
+
+export type SalaryPercentPoint = {
+  startDate: string;
+  percent: number | null; // null when the cycle has no salary set — renders as a chart gap
 };

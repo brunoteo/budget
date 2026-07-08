@@ -1,17 +1,9 @@
 "use client";
 import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { formatEur } from "@/lib/format/eur";
+import { formatMonthYear } from "@/lib/format/date";
 import { copy } from "@/lib/copy";
 import type { CycleSummary } from "@/lib/trends/types";
-
-const MONTHS_IT = ["gen", "feb", "mar", "apr", "mag", "giu", "lug", "ago", "set", "ott", "nov", "dic"];
-
-function formatMonthYear(iso: string): string {
-  const [yStr, mStr] = iso.split("-");
-  const m = Number(mStr);
-  if (!yStr || !m || m < 1 || m > 12) return iso;
-  return `${MONTHS_IT[m - 1]} '${yStr.slice(-2)}`;
-}
 
 function formatCompactEur(v: number): string {
   if (v === 0) return "0";
