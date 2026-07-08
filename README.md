@@ -1,32 +1,72 @@
 # Budget
 
-Personal budget app for two users. See `docs/superpowers/specs/2026-04-28-budget-app-design.md` for the full design and `CLAUDE.md` for engineering conventions.
+A two-user personal-budget web app for couples with separate paychecks and pay cycles that don't align with the calendar month. Built to replace a manual Google Sheet.
+
+Each spouse gets an isolated account with their own data and their own pay-cycle (e.g. 27th-to-26th, 10th-to-9th). Cycles align to paycheck day, not the 1st of the month — the app's core differentiator. Italian-only UI, mobile-first (built for Android).
+
+## Features
+
+- **Paycheck-aligned cycles** — each user sets their own cycle start day; cycles are created lazily as expenses land in them.
+- **Dashboard** — KPI cards (stipendio, speso, rimanente, % stipendio), pacing indicator (in linea / fuori ritmo), end-of-cycle spending forecast.
+- **Categories & expenses** — manual entry, per-category expected budgets, edit/delete with cycle re-derivation.
+- **Wallet CSV import** — bulk-import past transactions from [Wallet by BudgetBakers](https://budgetbakers.com/) (or any CSV via column mapping), with duplicate detection, category-rule suggestions, and a review-before-commit staging step.
+- **Trends** — top movers, per-category sparklines, year-over-year rollup, % stipendio speso history.
+- **Search** — cross-cycle transaction search by text, date, amount, or category.
+- **PWA** — installable on Android home screen.
+
+See [`docs/ROADMAP.md`](docs/ROADMAP.md) for the full shipped-plan history and [`docs/superpowers/specs/`](docs/superpowers/specs/) for design specs.
+
+## Tech stack
+
+- **Next.js 16** (App Router, Server Components, Server Actions) + TypeScript strict
+- **Tailwind CSS v4** + **shadcn/ui** (Base UI)
+- **Supabase** — Postgres + Auth + Row-Level Security
+- **Recharts**, **papaparse** (CSV import), **Zod** + **react-hook-form**
+- **Vitest** (unit + integration), **Playwright** (E2E)
+- Hosted on Vercel + Supabase free tiers
 
 ## Quick start
 
 ```bash
 pnpm install
 pnpm db:start         # local Supabase via Docker
+cp .env.local.example .env.local   # fill in local keys printed by db:start
 pnpm dev
 ```
 
-## Database backup
-
-Dump the linked production Supabase project to `backups/`:
+Optionally seed sample data for local development:
 
 ```bash
-pnpm db:backup
+pnpm db:seed          # creates test@test.com / password with 14 cycles of sample data
 ```
 
-Produces three timestamped files under `backups/`:
+## Commands
 
-- `budget-<UTC>-roles.sql` — cluster roles
-- `budget-<UTC>-schema.sql` — schema
-- `budget-<UTC>-data.sql` — data (COPY format)
+| Command           | What it does                                   |
+|--------------------|-------------------------------------------------|
+| `pnpm dev`         | Run Next.js dev server                           |
+| `pnpm build`       | Production build                                 |
+| `pnpm lint`        | ESLint                                           |
+| `pnpm typecheck`   | `tsc --noEmit`                                   |
+| `pnpm test`        | Vitest unit + integration                        |
+| `pnpm test:e2e`    | Playwright E2E                                   |
+| `pnpm db:start`    | `supabase start` — local Postgres + Studio       |
+| `pnpm db:reset`    | Reset local DB and re-run all migrations         |
+| `pnpm db:types`    | Regenerate `src/types/database.ts` from local DB |
+| `pnpm db:backup`   | Dump the linked production Supabase project      |
 
-Notes:
+## Deploying
 
-- Targets the **linked** project (production: `oseatsxiystwkjzbsnlj`). Verify with `pnpm supabase projects list` — the linked row has a dot.
-- `backups/` is gitignored; dumps stay local.
-- To restore: apply `roles.sql` → `schema.sql` → `data.sql` (in that order) via `psql` against a fresh database.
-- For a local dump instead, edit `scripts/db-backup.sh` and swap `--linked` → `--local` (requires `pnpm db:start` running).
+See [`docs/deploy.md`](docs/deploy.md) for the full Supabase + Vercel production runbook.
+
+## Project structure
+
+See [`CLAUDE.md`](CLAUDE.md) for repository layout, conventions, and data-model invariants.
+
+## Scope
+
+This is a personal project built for two specific users, not a general-purpose product. No joint-household features, no multi-currency, no bank-API integrations, no native mobile app. See [`docs/ROADMAP.md`](docs/ROADMAP.md#out-of-scope-across-all-plans) for the full out-of-scope list.
+
+## License
+
+Personal project, source-available for reference. No license granted for reuse.
