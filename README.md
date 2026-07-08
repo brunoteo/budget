@@ -1,8 +1,8 @@
 # Budget
 
-A personal-budget web app for people with separate paychecks and pay cycles that don't align with the calendar month. Built to replace a manual Google Sheet.
+A personal-budget web app to replace a manual Google Sheet — paycheck-aligned cycles instead of calendar months, plus CSV import for past transactions. Italian-only UI, mobile-first (built for Android).
 
-Each user gets an isolated account with their own data and their own pay-cycle (e.g. 27th-to-26th, 10th-to-9th). Cycles align to paycheck day, not the 1st of the month — the app's core differentiator. Italian-only UI, mobile-first (built for Android).
+Each user gets an isolated account with their own data and their own pay-cycle (e.g. 27th-to-26th, 10th-to-9th). Cycles align to paycheck day, not the 1st of the month — the app's core differentiator.
 
 ## Features
 
