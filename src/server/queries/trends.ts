@@ -11,7 +11,7 @@ export async function getTrendsData(limit = 12): Promise<TrendsData> {
   const supabase = await getServerSupabase();
   const { data: allCycles } = await supabase
     .from("cycles")
-    .select("id, start_date")
+    .select("id, start_date, salary")
     .order("start_date", { ascending: false })
     .limit(limit * 2);
 
@@ -50,7 +50,8 @@ export async function getTrendsData(limit = 12): Promise<TrendsData> {
     const perCategory = catsByCycle.get(cycle.id) ?? [];
     const totalSpent = perCategory.reduce((s, c) => s + c.spent, 0);
     const totalBudget = perCategory.reduce((s, c) => s + c.budget, 0);
-    return { startDate: cycle.start_date, totalSpent, totalBudget, perCategory };
+    const salary = cycle.salary === null ? null : Number(cycle.salary);
+    return { startDate: cycle.start_date, totalSpent, totalBudget, perCategory, salary };
   });
 
   // allCycles is desc; recent (last `limit`) → ascending order in the array.

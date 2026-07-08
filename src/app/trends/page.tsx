@@ -3,7 +3,8 @@ import { TrendsChart } from "@/components/trends-chart";
 import { TopMovers } from "@/components/top-movers";
 import { CategorySparklines } from "@/components/category-sparklines";
 import { YearRollupTable } from "@/components/year-rollup-table";
-import { groupByCategory, computeTopMovers, computeYearRollup } from "@/lib/trends";
+import { groupByCategory, computeTopMovers, computeYearRollup, computeSalaryPercentSeries } from "@/lib/trends";
+import { SalaryPercentChart } from "@/components/salary-percent-chart";
 import { copy } from "@/lib/copy";
 import { BackLink } from "@/components/back-link";
 
@@ -27,6 +28,8 @@ export default async function TrendsPage() {
   const series = groupByCategory(data.recent);
   const movers = computeTopMovers(data.recent, 3);
   const rollup = computeYearRollup(data.recent, data.prior);
+  const salaryPercent = computeSalaryPercentSeries(data.recent);
+  const hasSalaryData = salaryPercent.some((p) => p.percent !== null);
 
   return (
     <main className="mx-auto w-full max-w-3xl space-y-8 p-4 sm:p-6">
@@ -65,6 +68,19 @@ export default async function TrendsPage() {
           <div className="rounded-lg border border-border bg-surface p-4 shadow-sm">
             <TrendsChart data={data.recent} />
           </div>
+        </section>
+
+        <section className="space-y-2">
+          <h3 className="px-1 text-xs uppercase tracking-wider text-text-muted">
+            {copy.trends.salaryPercentHeading}
+          </h3>
+          {hasSalaryData ? (
+            <div className="rounded-lg border border-border bg-surface p-4 shadow-sm">
+              <SalaryPercentChart data={salaryPercent} />
+            </div>
+          ) : (
+            <p className="text-sm text-text-muted">{copy.trends.salaryPercentNoData}</p>
+          )}
         </section>
 
         {recentCount >= 2 && (

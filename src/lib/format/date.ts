@@ -4,6 +4,8 @@ const dmyFormatter = new Intl.DateTimeFormat("it-IT", {
   year: "numeric",
 });
 
+const MONTHS_IT = ["gen", "feb", "mar", "apr", "mag", "giu", "lug", "ago", "set", "ott", "nov", "dic"];
+
 const shortDayMonth = new Intl.DateTimeFormat("it-IT", { day: "numeric", month: "short" });
 const shortDayMonthYear = new Intl.DateTimeFormat("it-IT", { day: "numeric", month: "short", year: "numeric" });
 
@@ -30,4 +32,11 @@ export function formatDateRange(start: string | Date, end: string | Date): strin
 
 export function formatRangeShort(start: string | Date, end: string | Date): string {
   return `${shortDayMonth.format(toDate(start))} – ${shortDayMonth.format(toDate(end))}`;
+}
+
+export function formatMonthYear(iso: string): string {
+  const [yStr, mStr] = iso.split("-");
+  const m = Number(mStr);
+  if (!yStr || !m || m < 1 || m > 12) return iso;
+  return `${MONTHS_IT[m - 1]} '${yStr.slice(-2)}`;
 }
